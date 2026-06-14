@@ -325,8 +325,10 @@ Each phase is independently reviewable; the live site is untouched until merge.
 - **Phase 4 — App-feel features. 🟡 PARTLY DONE.** **Meal logging** ("mark eaten") →
   **live protein ring** on Today, and the **dark-mode toggle**, are in. *Remaining:* the
   (+) "Build a plate" sheet, richer motion, and more empty/edge states.
-- **Phase 5 — PWA, a11y, cleanup.** `vite-plugin-pwa`; delete dead files/CSS; keyboard
-  + screen-reader pass; update README/`docs`.
+- **Phase 5 — PWA, a11y, cleanup. 🟡 PWA DONE.** `vite-plugin-pwa` (Workbox) generates
+  a precaching service worker + manifest → installable & offline-first (catalogue is
+  bundled, so it works with no network after first load; `autoUpdate`). *Remaining:*
+  accessibility pass, tighten TypeScript on the ported modules, remove dead code.
 - **Phase 6 — QA.** iOS Safari (nav drift, safe areas), Lighthouse PWA/perf, install +
   offline test, data-migration test from an existing `graze.prefs.v1`.
 
