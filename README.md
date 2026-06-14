@@ -5,8 +5,9 @@ No egg, no cheese, no tofu. **Weekdays are assembly-only** — the most you'll
 do is toast bread or sear paneer for five minutes. **Weekends relax the
 rules** with proper cooked recipes (with method steps).
 
-Built for a 12pm–10pm workday: tiffin-friendly lunches, light late dinners,
-and ~60–80g protein per day.
+Built for a 12pm–10pm workday: tiffin-friendly lunches, an **early dinner
+eaten by 7–8pm** (packed to eat at work on office days, since home comes
+late), and ~60–80g protein per day.
 
 ## Features
 
