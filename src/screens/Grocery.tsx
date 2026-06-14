@@ -3,13 +3,23 @@ import { Engine } from "../lib/engine";
 import { useApp } from "../state/AppContext";
 import { KEYS, load, save } from "../lib/storage";
 import { TopBar } from "../components/TopBar";
+import { tokensForItem, productById } from "../lib/brands";
 import type { Plan } from "../lib/types";
 
 const grocer = Engine as unknown as { buildGrocery: (plan: Plan) => { group: string; items: string[] }[] };
 
 export function Grocery() {
-  const { plan } = useApp();
+  const { plan, brands } = useApp();
   const groups = useMemo(() => (plan ? grocer.buildGrocery(plan) : []), [plan]);
+  const brandFor = (item: string): string | null => {
+    for (const t of tokensForItem(item)) {
+      const pid = brands[t];
+      if (!pid) continue;
+      const prod = productById(pid);
+      if (prod && prod.source === "label") return prod.brand;
+    }
+    return null;
+  };
   const [checks, setChecks] = useState<Record<string, boolean>>(() => load(KEYS.grocery, {}));
   if (!plan) return <p className="loading">Loading your week…</p>;
 
@@ -46,7 +56,7 @@ export function Grocery() {
                 <li key={item}>
                   <button type="button" className={"g-item" + (checks[item] ? " is-checked" : "")} onClick={() => toggle(item)}>
                     <span className="g-check" aria-hidden="true">{checks[item] ? "✓" : ""}</span>
-                    <span className="g-text">{item}</span>
+                    <span className="g-text">{item}{brandFor(item) && <span className="g-brand">{brandFor(item)}</span>}</span>
                   </button>
                 </li>
               ))}

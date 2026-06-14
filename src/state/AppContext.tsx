@@ -36,6 +36,9 @@ interface AppValue {
   // meal logging (today-scoped)
   isEaten: (slot: string) => boolean;
   toggleEaten: (slot: string) => void;
+  // brand picker (ingredient token -> product id)
+  brands: Record<string, string>;
+  setBrand: (token: string, productId: string) => void;
   // theme
   theme: Theme;
   setTheme: (t: Theme) => void;
@@ -56,6 +59,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [needsOnboarding, setNeedsOnboarding] = useState(savedPrefs == null);
   const [editing, setEditing] = useState(false);
   const [log, setLog] = useState<Record<string, boolean>>(() => load(KEYS.log, {}));
+  const [brands, setBrands] = useState<Record<string, string>>(() => load(KEYS.brands, {}));
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -127,6 +131,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const alternatesFor = (dayKey: string, slot: string, currentId: string): Meal[] =>
     meals ? engine.alternatesFor(prefs, dayKey, slot, currentId, meals) : [];
 
+  const setBrand = (token: string, productId: string) =>
+    setBrands((prev) => {
+      const next = { ...prev };
+      if (productId) next[token] = productId;
+      else delete next[token];
+      save(KEYS.brands, next);
+      return next;
+    });
+
   const isEaten = (slot: string) => !!log[`${todayISO}:${slot}`];
   const toggleEaten = (slot: string) =>
     setLog((prev) => {
@@ -142,6 +155,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         needsOnboarding, editing, completeOnboarding, editPreferences, cancelEditing,
         regenerate, resetAll, excludeMeal, restoreMeal, toggleItem, setOverride, setDayType, alternatesFor,
         isEaten, toggleEaten,
+        brands, setBrand,
         theme, setTheme,
       }}
     >

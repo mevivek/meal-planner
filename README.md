@@ -142,8 +142,9 @@ bottom `TabBar` and per-screen `TopBar`s. `src/state/AppContext.tsx` holds share
 check-off with progress), and **More** (light/dark/system, regenerate, start over, and
 an excluded-meals / avoid-ingredients manager). **Onboarding** is a full-screen
 multi-step wizard (shown on first run, re-openable via More → Edit preferences) that
-writes the same prefs schema the engine expects. A few tools (brand picker, day-type
-toggle, Pantry/Build) land in later phases.
+writes the same prefs schema the engine expects. A per-day **day-type toggle**, a
+center **(+) Build-a-plate** sheet, a **brand picker** (recipe ingredient → product),
+and **Pantry** / **Techniques** tools (More → Tools) round out the app.
 
 ### `legacy/`
 The original app: `legacy/js/{data,products,engine,onboarding,app}.js`, `legacy/css/

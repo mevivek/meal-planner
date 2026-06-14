@@ -316,13 +316,13 @@ Each phase is independently reviewable; the live site is untouched until merge.
   Grocery / More** screens wired to the engine (Week accordion, Grocery check-off with
   progress, More appearance/regenerate/reset). No new deps; ~57 kB gz. (Inline SVG icon
   set for now; `framer-motion`/`lucide` can be added if richer motion/icons are wanted.)
-- **Phase 2 — Core screens + interactions. 🟡 MOSTLY DONE.** Today/Week/Grocery/More
+- **Phase 2 — Core screens + interactions. ✅ DONE.** Today/Week/Grocery/More
   built (Phase 1); per-meal **Swap** (alternates bottom sheet → override + re-plan) and
   **Exclude**, plus an **avoid-ingredients** manager in More (excluded-meal chips +
-  searchable ingredient toggle) are wired to the engine. **Per-day day-type toggle**
-  (Office/WFH/Off on Today + Week → re-plans) is in, and **Pantry** (searchable product
-  nutrition) + **Quick techniques** open as sheets from More → Tools. *Remaining:* the
-  brand picker.
+  searchable ingredient toggle), all wired to the engine. **Per-day day-type toggle**
+  (Office/WFH/Off on Today + Week → re-plans), **Pantry** (searchable product nutrition)
+  + **Quick techniques** (More → Tools), and a **brand picker** (links recipe
+  ingredients with label data to a chosen product, tagging the grocery line).
 - **Phase 3 — Onboarding. ✅ DONE.** Full-screen multi-step wizard ported to React with
   the **unchanged prefs schema** (same `buildPrefs` mapping) — about you, diet, allergens,
   cooking, per-day schedule, goal + protein, cuisines, wellness. Shown on first run and
