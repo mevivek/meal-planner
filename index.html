@@ -106,13 +106,29 @@
     </section>
   </main>
 
-  <!-- Bottom nav -->
+  <!-- Bottom nav (iOS-26-style liquid glass) -->
   <nav class="bottom-nav" id="bottomNav" aria-label="Sections">
-    <a href="#plan" data-target="plan" class="nav-item active"><span class="nav-ico">📅</span><span>Plan</span></a>
-    <a href="#build" data-target="build" class="nav-item"><span class="nav-ico">🧩</span><span>Build</span></a>
-    <a href="#grocery" data-target="grocery" class="nav-item"><span class="nav-ico">🛒</span><span>Grocery</span></a>
-    <a href="#swaps" data-target="swaps" class="nav-item"><span class="nav-ico">🔄</span><span>Swaps</span></a>
-    <a href="#tips" data-target="tips" class="nav-item"><span class="nav-ico">💡</span><span>Tips</span></a>
+    <span class="nav-pill" id="navPill" aria-hidden="true"></span>
+    <a href="#plan" data-target="plan" class="nav-item active">
+      <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg></span>
+      <span>Plan</span>
+    </a>
+    <a href="#build" data-target="build" class="nav-item">
+      <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg></span>
+      <span>Build</span>
+    </a>
+    <a href="#grocery" data-target="grocery" class="nav-item">
+      <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 12.4a1 1 0 0 1-1 .9H8a1 1 0 0 1-1-.9L6 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg></span>
+      <span>Grocery</span>
+    </a>
+    <a href="#swaps" data-target="swaps" class="nav-item">
+      <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3.5l3 3-3 3"/><path d="M20 6.5H9a4 4 0 0 0-4 4"/><path d="M7 20.5l-3-3 3-3"/><path d="M4 17.5h11a4 4 0 0 0 4-4"/></svg></span>
+      <span>Swaps</span>
+    </a>
+    <a href="#tips" data-target="tips" class="nav-item">
+      <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.4.9 1 .9 1.7v.4h5.2v-.4c0-.7.3-1.3.9-1.7A6 6 0 0 0 12 3z"/></svg></span>
+      <span>Tips</span>
+    </a>
   </nav>
 
   <script src="js/data.js"></script>

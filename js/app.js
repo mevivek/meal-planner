@@ -285,14 +285,24 @@
     const items = Array.from(document.querySelectorAll(".nav-item"));
     const sections = items.map((i) => document.getElementById(i.dataset.target));
     const topbar = $("#topbar");
+    const pill = document.getElementById("navPill");
+
+    // Glide the glass highlight under whichever tab is active.
+    function movePill() {
+      const active = items.find((it) => it.classList.contains("active"));
+      if (!active || !pill) return;
+      pill.style.left = active.offsetLeft + "px";
+      pill.style.width = active.offsetWidth + "px";
+    }
+    function setActive(id) {
+      items.forEach((it) => it.classList.toggle("active", it.dataset.target === id));
+      movePill();
+    }
 
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
-          if (e.isIntersecting) {
-            const id = e.target.id;
-            items.forEach((it) => it.classList.toggle("active", it.dataset.target === id));
-          }
+          if (e.isIntersecting) setActive(e.target.id);
         });
       },
       { rootMargin: "-45% 0px -50% 0px", threshold: 0 }
@@ -302,9 +312,15 @@
     items.forEach((it) => {
       it.addEventListener("click", (e) => {
         e.preventDefault();
+        setActive(it.dataset.target); // snappy highlight before the scroll settles
         document.getElementById(it.dataset.target).scrollIntoView({ behavior: "smooth" });
       });
     });
+
+    // Position the pill once layout/fonts are ready, and keep it aligned on resize.
+    requestAnimationFrame(() => requestAnimationFrame(movePill));
+    window.addEventListener("load", movePill);
+    window.addEventListener("resize", movePill);
 
     let ticking = false;
     window.addEventListener("scroll", () => {

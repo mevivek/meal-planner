@@ -307,40 +307,59 @@ main { max-width: var(--max); margin: 0 auto; }
 .page-foot { margin: 30px 0 10px; padding: 18px; text-align: center; }
 .page-foot p { font-size: 12.5px; color: var(--ink-soft); }
 
-/* ---------- Bottom nav (floating pill bar) ---------- */
+/* ---------- Bottom nav (iOS-26 liquid glass) ---------- */
 .bottom-nav {
   position: fixed; z-index: 50;
   left: 14px; right: 14px;
   bottom: calc(12px + env(safe-area-inset-bottom));
   max-width: 432px; margin: 0 auto;
   display: flex; gap: 2px;
-  /* Solid background (no backdrop-filter): blur on a fixed element makes
-     iOS Safari detach it mid-page during momentum scroll. */
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 24px;
-  box-shadow: 0 10px 30px rgba(20, 40, 30, 0.16), 0 2px 6px rgba(20, 40, 30, 0.08);
-  padding: 8px 8px;
-  /* Own compositing layer keeps it pinned while scrolling. */
+  padding: 7px;
+  border-radius: 32px;
+  /* Frosted glass: translucent + blur + saturation boost. */
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  /* Drop shadow for lift + inset top rim = the glass specular highlight. */
+  box-shadow:
+    0 12px 34px rgba(20, 40, 30, 0.18),
+    0 2px 8px rgba(20, 40, 30, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.25);
+  /* Own compositing layer keeps the blurred fixed bar pinned on iOS. */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
   will-change: transform;
 }
+/* Solid fallback where backdrop-filter is unsupported. */
+@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
+  .bottom-nav { background: #fff; }
+}
+
+/* Sliding glass highlight behind the active tab. */
+.nav-pill {
+  position: absolute; z-index: 0; top: 7px; bottom: 7px; left: 7px; width: 0;
+  border-radius: 23px;
+  background: rgba(31, 157, 99, 0.16);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: left .34s cubic-bezier(.34, 1.2, .4, 1), width .34s cubic-bezier(.34, 1.2, .4, 1);
+  pointer-events: none;
+}
+
 .nav-item {
+  position: relative; z-index: 1;
   flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
-  padding: 9px 4px; border-radius: 16px;
+  padding: 8px 4px; border-radius: 23px;
   text-decoration: none; color: var(--ink-soft);
   font-size: 10.5px; font-weight: 600;
-  transition: color .22s ease, background .22s ease, transform .15s ease;
+  transition: color .22s ease, transform .15s ease;
 }
-.nav-item:active { transform: scale(.93); }
-.nav-item .nav-ico {
-  font-size: 19px; line-height: 1;
-  filter: grayscale(.5) opacity(.65);
-  transition: filter .22s ease, transform .22s ease;
-}
-.nav-item.active { color: var(--green-900); background: var(--green-100); }
-.nav-item.active .nav-ico { filter: none; transform: translateY(-1px) scale(1.06); }
+.nav-item:active { transform: scale(.92); }
+.nav-ico { line-height: 0; }
+.nav-ico svg { width: 23px; height: 23px; display: block; transition: transform .22s ease; }
+.nav-item.active { color: var(--green-900); }
+.nav-item.active .nav-ico svg { transform: translateY(-1px); }
 
 /* clear the floating bar */
 body { padding-bottom: calc(var(--nav-h) + 30px + env(safe-area-inset-bottom)); }
