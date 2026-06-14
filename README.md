@@ -213,6 +213,23 @@ The implementation uses `@anthropic-ai/sdk` with `claude-opus-4-8` and **structu
 output** (`messages.parse()` + a Zod schema mirroring `Meal`), keeping generated meals
 in the exact shape the engine consumes.
 
+**Tooling (scaffolding in place — needs your API key to generate):**
+
+```bash
+ANTHROPIC_API_KEY=… npm run generate:catalogue   # → public/catalogue.json (validated)
+npm run validate:catalogue                        # offline schema + domain checks (CI gate)
+```
+
+- `scripts/catalogue-schema.mjs` — shared Zod schema, vocabulary, and the domain rules
+  the JSON Schema can't enforce (protein/prep ranges, unique ids, and the allergen-safety
+  check that any flagged ingredient in `items` appears in `contains`).
+- `scripts/generate-catalogue.mjs` — calls Claude (build-time only; key from env), validates,
+  writes `public/catalogue.json`.
+- `scripts/validate-catalogue.mjs` — runs without a key; suitable for CI.
+- `generatedMealSource` (in `mealSource.ts`) loads that JSON with a static fallback;
+  switch the active `mealSource` to it once a catalogue is generated and reviewed. The
+  key never enters the client bundle, and the app stays offline-first.
+
 ## Develop & build
 
 ```bash
