@@ -8,6 +8,7 @@ import { More } from "./screens/More";
 import { Onboarding } from "./screens/Onboarding";
 import { BuildSheet } from "./components/BuildSheet";
 import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 export function App() {
   return (
@@ -28,15 +29,24 @@ function Root() {
 function Shell() {
   const [route, navigate] = useHashRoute();
   const [building, setBuilding] = useState(false);
+  const reduce = useReducedMotion();
   return (
     <div className="shell">
-      {/* key={route} remounts the screen → CSS entrance animation per navigation */}
-      <main className="screen" key={route}>
-        {route === "today" && <Today />}
-        {route === "week" && <Week />}
-        {route === "grocery" && <Grocery />}
-        {route === "more" && <More />}
-      </main>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.main
+          key={route}
+          className="screen"
+          initial={reduce ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+        >
+          {route === "today" && <Today />}
+          {route === "week" && <Week />}
+          {route === "grocery" && <Grocery />}
+          {route === "more" && <More />}
+        </motion.main>
+      </AnimatePresence>
       <TabBar route={route} onNavigate={navigate} onBuild={() => setBuilding(true)} />
       {building && <BuildSheet onClose={() => setBuilding(false)} />}
     </div>

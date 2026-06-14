@@ -335,9 +335,10 @@ Each phase is independently reviewable; the live site is untouched until merge.
   the **unchanged prefs schema** (same `buildPrefs` mapping) — about you, diet, allergens,
   cooking, per-day schedule, goal + protein, cuisines, wellness. Shown on first run and
   re-openable via **More → Edit preferences** (prefilled).
-- **Phase 4 — App-feel features. 🟡 MOSTLY DONE.** **Meal logging** ("mark eaten") →
-  **live protein ring** on Today, the **dark-mode toggle**, and the center **(+)
-  "Build a plate"** sheet are in. *Remaining:* richer motion and more empty/edge states.
+- **Phase 4 — App-feel features. ✅ DONE.** **Meal logging** ("mark eaten") → **live
+  protein ring** on Today, the **dark-mode toggle**, the center **(+) "Build a plate"**
+  sheet, and **framer-motion screen transitions** (fade/slide between tabs, reduced-
+  motion aware) are all in.
 - **Phase 5 — PWA, a11y, cleanup. ✅ DONE.** `vite-plugin-pwa` (Workbox) generates a
   precaching service worker + manifest → installable & offline-first (`autoUpdate`).
   Keyboard `:focus-visible` ring added; `npm run typecheck` is green (new code is
