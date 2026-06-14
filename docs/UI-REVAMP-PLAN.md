@@ -308,8 +308,14 @@ Each phase is independently reviewable; the live site is untouched until merge.
   (`.github/workflows/deploy.yml`) — deploys on merge to `main` (needs Settings → Pages
   → Source = GitHub Actions). TypeScript is loose on the ported modules for now
   (type-tightened in Phase 5; `npm run build` uses esbuild and does not block on types).
-- **Phase 1 — App shell & design system.** Tokens (light/dark), primitives, tab bar,
-  top bars, hash-synced screen switching + transitions.
+- **Phase 1 — App shell & design system. ✅ DONE (on branch).** Design tokens
+  (light/dark + a Light/Dark/System toggle, `graze.theme.v1`); a **bottom tab bar**
+  with hash-routed screen switching (`#/today`, `#/week`, `#/grocery`, `#/more`) and a
+  per-navigation entrance animation (reduced-motion respected); per-screen **top bars**;
+  shared app state (`AppContext` — prefs, plan, regenerate); and real **Today / Week /
+  Grocery / More** screens wired to the engine (Week accordion, Grocery check-off with
+  progress, More appearance/regenerate/reset). No new deps; ~57 kB gz. (Inline SVG icon
+  set for now; `framer-motion`/`lucide` can be added if richer motion/icons are wanted.)
 - **Phase 2 — Core screens.** Today (incl. progress ring), Week, Grocery, More — port
   the rendering logic out of `app.js` into components at parity.
 - **Phase 3 — Onboarding.** Port the wizard to React with the unchanged schema.

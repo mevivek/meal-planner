@@ -76,19 +76,24 @@ and the planner can be unit-tested headlessly.
 │   └── manifest.webmanifest
 ├── src/
 │   ├── main.tsx              # React entry
-│   ├── App.tsx               # loads prefs → meals → engine → renders Today
-│   ├── styles.css            # neutral light/dark baseline (full design system: Phase 1)
+│   ├── App.tsx               # app shell: hash-routed screen switching + tab bar
+│   ├── styles.css            # design tokens (light/dark) + component styles
 │   ├── lib/
 │   │   ├── engine.ts         # PORTED: pure planner (targets, filter, score, plan…)
 │   │   ├── data.ts           # PORTED: meal library + config
 │   │   ├── products.ts       # PORTED: product-nutrition database
 │   │   ├── types.ts          # shared TS types (Meal, Prefs, Plan, …)
 │   │   ├── mealSource.ts     # data-source seam (static now; Claude-hosted later)
-│   │   └── storage.ts        # localStorage keys + safe get/set
+│   │   ├── storage.ts        # localStorage keys + safe get/set
+│   │   ├── useHashRoute.ts   # hash router (#/today … #/more)
+│   │   └── useTheme.ts       # light/dark/system theme
 │   ├── state/
+│   │   ├── AppContext.tsx    # shared state: prefs → engine → plan, regenerate, theme
 │   │   └── defaultPrefs.ts   # default prefs (until the React onboarding is ported)
+│   ├── components/
+│   │   ├── TabBar.tsx  TopBar.tsx  MealCard.tsx  icons.tsx
 │   └── screens/
-│       └── Today.tsx         # minimal Today screen (full design: later phases)
+│       ├── Today.tsx  Week.tsx  Grocery.tsx  More.tsx
 ├── .github/workflows/
 │   └── deploy.yml            # build + deploy to GitHub Pages
 ├── docs/
@@ -128,11 +133,15 @@ Shared types; centralised `localStorage` (keys preserved from legacy); the data-
 seam; and a default preferences object used to render a plan before the React
 onboarding wizard is ported (Phase 3).
 
-### `src/App.tsx`, `src/screens/Today.tsx`
-`App` loads prefs (or defaults), pulls the catalogue through `mealSource`, runs the
-engine, and renders the current day. `Today` renders that day's meals + a protein
-summary. This is the Phase 0 baseline; the full Today design (protein ring, meal
-logging, swap/exclude) lands in later phases.
+### App shell, state & screens
+`src/App.tsx` is the shell: a hash-routed (`#/today … #/more`) screen switcher with a
+bottom `TabBar` and per-screen `TopBar`s. `src/state/AppContext.tsx` holds shared state
+— it pulls the catalogue through `mealSource`, runs the engine, and exposes the plan,
+`regenerate`, theme, and reset. The screens (`src/screens/`) are **Today** (day's meals
++ protein progress), **Week** (7-day accordion), **Grocery** (aggregated check-off with
+progress), and **More** (light/dark/system, regenerate, start over). Richer Today
+interactions (protein ring, meal logging, swap/exclude) and the onboarding wizard land
+in later phases.
 
 ### `legacy/`
 The original app: `legacy/js/{data,products,engine,onboarding,app}.js`, `legacy/css/
