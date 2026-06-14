@@ -315,7 +315,7 @@ main { max-width: var(--max); margin: 0 auto; }
 .page-foot { margin: 30px 0 10px; padding: 18px; text-align: center; }
 .page-foot p { font-size: 12.5px; color: var(--ink-soft); }
 
-/* ---------- Bottom nav (iOS-26 liquid glass) ---------- */
+/* ---------- Bottom nav (floating pill) ---------- */
 .bottom-nav {
   position: fixed; z-index: 50;
   left: 14px; right: 14px;
@@ -324,25 +324,13 @@ main { max-width: var(--max); margin: 0 auto; }
   display: flex; gap: 2px;
   padding: 7px;
   border-radius: 32px;
-  /* Frosted glass: translucent + blur + saturation boost. */
-  background: rgba(255, 255, 255, 0.55);
-  -webkit-backdrop-filter: blur(22px) saturate(180%);
-  backdrop-filter: blur(22px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  /* Drop shadow for lift + inset top rim = the glass specular highlight. */
-  box-shadow:
-    0 12px 34px rgba(20, 40, 30, 0.18),
-    0 2px 8px rgba(20, 40, 30, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.25);
-  /* Own compositing layer keeps the blurred fixed bar pinned on iOS. */
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
-}
-/* Solid fallback where backdrop-filter is unsupported. */
-@supports not ((backdrop-filter: blur(2px)) or (-webkit-backdrop-filter: blur(2px))) {
-  .bottom-nav { background: #fff; }
+  /* Solid background, no backdrop-filter / transform / will-change: a blurred
+     or layer-promoted fixed bar mis-anchors against iOS Safari's collapsing
+     toolbar — it drifts mid-scroll and leaves a gap above the toolbar after
+     scrolling. A plain solid fixed bar tracks the viewport reliably. */
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 34px rgba(20, 40, 30, 0.16), 0 2px 8px rgba(20, 40, 30, 0.08);
 }
 
 /* Sliding glass highlight behind the active tab. */
