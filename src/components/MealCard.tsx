@@ -1,4 +1,6 @@
 import type { Meal } from "../lib/types";
+import { useApp } from "../state/AppContext";
+import { BRAND_INDEX, brandableTokens, titleCase } from "../lib/brands";
 
 const SLOT_LABEL: Record<string, string> = {
   breakfast: "Breakfast",
@@ -16,6 +18,8 @@ export interface MealCardProps {
 }
 
 export function MealCard({ meal, eaten, onToggleEaten, onSwap, onExclude }: MealCardProps) {
+  const { brands, setBrand } = useApp();
+  const tokens = brandableTokens(meal);
   const hasActions = onToggleEaten || onSwap || onExclude;
   return (
     <li className={"meal" + (eaten ? " meal--eaten" : "")}>
@@ -35,6 +39,22 @@ export function MealCard({ meal, eaten, onToggleEaten, onSwap, onExclude }: Meal
             <summary>Recipe · {meal.recipe.length} steps</summary>
             <ol>{meal.recipe.map((s, i) => <li key={i}>{s}</li>)}</ol>
           </details>
+        )}
+
+        {tokens.length > 0 && (
+          <div className="brand-row">
+            {tokens.map((t) => (
+              <label key={t} className="brand-pick">
+                <span>🏷️ {titleCase(t)}</span>
+                <select value={brands[t] ?? ""} onChange={(e) => setBrand(t, e.target.value)}>
+                  <option value="">Any brand</option>
+                  {BRAND_INDEX[t].map((p) => (
+                    <option key={p.id} value={p.id}>{p.brand} · {p.per.protein}g · {p.serving}</option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          </div>
         )}
 
         {hasActions && (

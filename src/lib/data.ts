@@ -1,3 +1,4 @@
+// @ts-nocheck — ported from legacy JS; type-tightened in a later pass
 /* ============================================================
    Graze — meal library & config (pure data)
    The engine (engine.js) selects from MEALS using the user's

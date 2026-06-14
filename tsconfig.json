@@ -16,11 +16,7 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-
-    "// note": "engine.ts/data.ts/products.ts are ported JS, type-tightened in a later phase",
-    "exclude_typecheck": ["src/lib/engine.ts", "src/lib/data.ts", "src/lib/products.ts"]
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src"]
 }

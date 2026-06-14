@@ -1,10 +1,16 @@
 name: Deploy to GitHub Pages
 
 # Builds the Vite app and publishes it to GitHub Pages.
-# Requires repo Settings → Pages → Source = "GitHub Actions".
+#
+# NOT the active deploy path. This needs repo Settings → Actions → General →
+# "Allow all actions and reusable workflows" (otherwise the build job can't get a
+# runner) AND Pages Source = "GitHub Actions". The app currently ships via the
+# gh-pages branch — see scripts/deploy-ghpages.sh and README → Deployment.
+#
+# Manual-only so it doesn't auto-fail on every push. To switch to CI deploys:
+# enable the Actions permission above, set Pages Source = GitHub Actions, then
+# add `push: { branches: [main] }` back here.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:

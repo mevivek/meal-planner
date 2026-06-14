@@ -1,3 +1,4 @@
+// @ts-nocheck — ported from legacy JS; type-tightened in a later pass
 import { MEALS, BUILD, DAY_KEYS, DAY_LABEL, DAY_FULL, COOK_RANK, CAT_LABEL, CAT_ORDER } from "./data";
 /* ============================================================
    Graze — planner engine (pure, no DOM)

@@ -261,6 +261,14 @@ GitHub Pages currently serves the static repo directly. With Vite there's a buil
 - The live site keeps working through the migration: nothing deploys until the new
   pipeline lands on `main`.
 
+> **Update — shipped via the `gh-pages` branch.** The repo's Actions runners are
+> restricted (the build job can't get a runner — marketplace actions aren't permitted),
+> so the Actions deploy fails at startup. Instead, Pages is set to **Deploy from a
+> branch → `gh-pages`**, and `scripts/deploy-ghpages.sh` builds + pushes `dist/` there;
+> GitHub's built-in "pages build and deployment" serves it. The app is **live and
+> verified** at https://mevivek.dev/meal-planner/. The Actions workflow remains for if
+> "Allow all actions and reusable workflows" is enabled later.
+
 ## 8a. Claude-hosted recipes/items (future data source)
 
 The meal/recipe catalogue may later be **generated/served via Claude** instead of the
@@ -316,22 +324,25 @@ Each phase is independently reviewable; the live site is untouched until merge.
   Grocery / More** screens wired to the engine (Week accordion, Grocery check-off with
   progress, More appearance/regenerate/reset). No new deps; ~57 kB gz. (Inline SVG icon
   set for now; `framer-motion`/`lucide` can be added if richer motion/icons are wanted.)
-- **Phase 2 — Core screens + interactions. 🟡 MOSTLY DONE.** Today/Week/Grocery/More
+- **Phase 2 — Core screens + interactions. ✅ DONE.** Today/Week/Grocery/More
   built (Phase 1); per-meal **Swap** (alternates bottom sheet → override + re-plan) and
   **Exclude**, plus an **avoid-ingredients** manager in More (excluded-meal chips +
-  searchable ingredient toggle) are wired to the engine. *Remaining:* brand picker,
-  per-day day-type toggle, and the Pantry / Techniques / Build tools.
+  searchable ingredient toggle), all wired to the engine. **Per-day day-type toggle**
+  (Office/WFH/Off on Today + Week → re-plans), **Pantry** (searchable product nutrition)
+  + **Quick techniques** (More → Tools), and a **brand picker** (links recipe
+  ingredients with label data to a chosen product, tagging the grocery line).
 - **Phase 3 — Onboarding. ✅ DONE.** Full-screen multi-step wizard ported to React with
   the **unchanged prefs schema** (same `buildPrefs` mapping) — about you, diet, allergens,
   cooking, per-day schedule, goal + protein, cuisines, wellness. Shown on first run and
   re-openable via **More → Edit preferences** (prefilled).
-- **Phase 4 — App-feel features. 🟡 PARTLY DONE.** **Meal logging** ("mark eaten") →
-  **live protein ring** on Today, and the **dark-mode toggle**, are in. *Remaining:* the
-  (+) "Build a plate" sheet, richer motion, and more empty/edge states.
-- **Phase 5 — PWA, a11y, cleanup. 🟡 PWA DONE.** `vite-plugin-pwa` (Workbox) generates
-  a precaching service worker + manifest → installable & offline-first (catalogue is
-  bundled, so it works with no network after first load; `autoUpdate`). *Remaining:*
-  accessibility pass, tighten TypeScript on the ported modules, remove dead code.
+- **Phase 4 — App-feel features. 🟡 MOSTLY DONE.** **Meal logging** ("mark eaten") →
+  **live protein ring** on Today, the **dark-mode toggle**, and the center **(+)
+  "Build a plate"** sheet are in. *Remaining:* richer motion and more empty/edge states.
+- **Phase 5 — PWA, a11y, cleanup. ✅ DONE.** `vite-plugin-pwa` (Workbox) generates a
+  precaching service worker + manifest → installable & offline-first (`autoUpdate`).
+  Keyboard `:focus-visible` ring added; `npm run typecheck` is green (new code is
+  type-clean; the three ported modules are `@ts-nocheck`, to tighten later); dead CSS
+  removed. A `scripts/deploy-ghpages.sh` publishes builds to the deploy branch.
 - **Phase 6 — QA.** iOS Safari (nav drift, safe areas), Lighthouse PWA/perf, install +
   offline test, data-migration test from an existing `graze.prefs.v1`.
 

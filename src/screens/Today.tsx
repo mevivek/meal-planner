@@ -5,6 +5,7 @@ import { IconRefresh } from "../components/icons";
 import { MealCard } from "../components/MealCard";
 import { ProteinRing } from "../components/ProteinRing";
 import { SwapSheet } from "../components/SwapSheet";
+import { DayTypeToggle } from "../components/DayTypeToggle";
 
 const DATE_FMT = new Intl.DateTimeFormat(undefined, { weekday: "long", month: "short", day: "numeric" });
 const MODE_LABEL: Record<string, string> = { office: "Office", wfh: "WFH", off: "Off" };
@@ -25,6 +26,7 @@ export function Today() {
         action={<IconButton label="Regenerate week" onClick={regenerate}><IconRefresh /></IconButton>}
       />
       <div className="content">
+        <DayTypeToggle dayKey={day.key} value={day.dayType} />
         <ProteinRing eaten={eaten} target={day.target} planned={day.total} />
 
         <ul className="meals">

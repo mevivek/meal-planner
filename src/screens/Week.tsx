@@ -4,6 +4,7 @@ import { TopBar, IconButton } from "../components/TopBar";
 import { IconRefresh } from "../components/icons";
 import { MealCard } from "../components/MealCard";
 import { SwapSheet } from "../components/SwapSheet";
+import { DayTypeToggle } from "../components/DayTypeToggle";
 
 export function Week() {
   const { plan, todayKey, regenerate, excludeMeal } = useApp();
@@ -31,16 +32,19 @@ export function Week() {
                   <span className="week-chev" aria-hidden="true">▾</span>
                 </button>
                 {isOpen && (
-                  <ul className="meals week-meals">
-                    {d.meals.map((m) => (
-                      <MealCard
-                        key={m.id}
-                        meal={m}
-                        onSwap={m.slot !== "snack" ? () => setSwap({ dayKey: d.key, slot: m.slot, id: m.id }) : undefined}
-                        onExclude={() => excludeMeal(m.id)}
-                      />
-                    ))}
-                  </ul>
+                  <div className="week-open">
+                    <DayTypeToggle dayKey={d.key} value={d.dayType} />
+                    <ul className="meals">
+                      {d.meals.map((m) => (
+                        <MealCard
+                          key={m.id}
+                          meal={m}
+                          onSwap={m.slot !== "snack" ? () => setSwap({ dayKey: d.key, slot: m.slot, id: m.id }) : undefined}
+                          onExclude={() => excludeMeal(m.id)}
+                        />
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </li>
             );

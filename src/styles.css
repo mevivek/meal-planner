@@ -82,6 +82,10 @@ body {
 
 button { font: inherit; color: inherit; cursor: pointer; }
 
+/* Keyboard focus ring (only for keyboard users, not mouse/touch). */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+button:focus:not(:focus-visible) { outline: none; }
+
 /* ---------- Shell ---------- */
 .shell {
   display: flex;
@@ -174,7 +178,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .week-total { font-size: 14px; font-weight: 600; color: var(--muted); }
 .week-chev { color: var(--faint); transition: transform 0.2s ease; }
 .week-day.is-open .week-chev { transform: rotate(180deg); }
-.week-meals { padding: 0 12px 12px; }
 
 /* ---------- Grocery ---------- */
 .g-group { margin-top: 18px; }
@@ -305,6 +308,49 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .ob-nav .btn { flex: 1; padding: 15px; border-radius: 14px; }
 .ob-nav .btn--primary { flex: 2; }
 .ob-nav > span { flex: 1; }
+
+/* ---------- Day-type toggle ---------- */
+.daytype { margin-bottom: 14px; }
+.week-open { padding: 4px 12px 12px; }
+.week-open .daytype { margin: 6px 0 10px; }
+
+/* ---------- Build tab + sheet ---------- */
+.tab--build { color: var(--accent); }
+.build-fab { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 22px; font-weight: 700; line-height: 1; }
+.sheet-note { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.build-row { margin-bottom: 8px; }
+.chips--scroll-x { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+.chips--scroll-x::-webkit-scrollbar { display: none; }
+.chips--scroll-x .chip { white-space: nowrap; flex: 0 0 auto; }
+.build-result { margin-top: 16px; background: var(--accent-soft); border-radius: var(--radius-sm); padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.build-result strong { font-size: 16px; color: var(--ink); }
+.build-total { color: var(--accent); font-weight: 700; }
+
+/* ---------- Pantry (product nutrition) ---------- */
+.pantry-cat { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin: 16px 0 8px; }
+.product { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 8px; }
+.product-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.p-name { font-weight: 700; font-size: 15px; }
+.p-brand { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.p-kcal { font-weight: 700; font-size: 18px; color: var(--accent); text-align: right; line-height: 1; }
+.p-kcal span { display: block; font-size: 9.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; }
+.p-macros { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.pm { font-size: 11px; color: var(--muted); background: var(--surface-2); border: 1px solid var(--border); padding: 5px 9px; border-radius: 999px; }
+.pm b { color: var(--ink); margin-right: 4px; }
+
+/* ---------- Techniques ---------- */
+.tip { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 10px; }
+.tip h3 { display: flex; align-items: center; gap: 10px; font-size: 16px; margin-bottom: 10px; }
+.tip ol { margin-left: 18px; }
+.tip li { font-size: 13.5px; color: var(--muted); margin-bottom: 7px; }
+
+/* ---------- Brand picker ---------- */
+.brand-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border); }
+.brand-pick { display: flex; flex-direction: column; gap: 4px; }
+.brand-pick > span { font-size: 10.5px; font-weight: 700; letter-spacing: 0.03em; color: var(--accent); }
+.brand-pick select { font: inherit; font-size: 12.5px; font-weight: 600; color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 7px 10px; max-width: 220px; }
+.brand-pick select:focus { outline: none; border-color: var(--accent); }
+.g-brand { font-size: 10.5px; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 2px 8px; border-radius: 999px; margin-left: 6px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, .content { animation: none !important; transition: none !important; }
