@@ -32,6 +32,14 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Make the `hidden` attribute authoritative even when an element sets its own
+   display (e.g. .onboarding/.bottom-nav use display:flex). An author display
+   rule otherwise beats the UA [hidden]{display:none}, so toggling
+   .hidden = true would not actually hide the overlay. The specific selectors
+   win on specificity (not just !important) so the cascade is unambiguous. */
+[hidden] { display: none !important; }
+.onboarding[hidden], .bottom-nav[hidden], .topbar[hidden], #app[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; scroll-padding-top: 64px; -webkit-text-size-adjust: 100%; }
 
 body {
