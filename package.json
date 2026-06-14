@@ -7,9 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "generate:catalogue": "node scripts/generate-catalogue.mjs",
-    "validate:catalogue": "node scripts/validate-catalogue.mjs"
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "framer-motion": "^12.40.0",
@@ -17,14 +15,12 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@anthropic-ai/sdk": "^0.104.1",
     "@types/node": "^22.19.21",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.7.0",
     "typescript": "^5.9.3",
     "vite": "^6.4.3",
-    "vite-plugin-pwa": "^1.3.0",
-    "zod": "^4.4.3"
+    "vite-plugin-pwa": "^1.3.0"
   }
 }

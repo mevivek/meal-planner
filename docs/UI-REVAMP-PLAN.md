@@ -304,11 +304,6 @@ cuisine, contains[], wellness[], detail, items[], recipe[]`). Notes:
   and its determinism contract are unaffected — Claude becomes a *content* source, not
   part of the runtime planner.
 
-> **Scaffolding shipped.** `scripts/{catalogue-schema,generate-catalogue,validate-catalogue}.mjs`
-> + `npm run generate:catalogue` / `validate:catalogue`, and `generatedMealSource` in
-> `src/lib/mealSource.ts` (static fallback). Schema + validator are verified; generation
-> needs `ANTHROPIC_API_KEY`. See `docs/CLAUDE-DATA-HOSTING.md` and README → Data source.
-
 ## 9. Phased implementation
 
 Each phase is independently reviewable; the live site is untouched until merge.
