@@ -1,0 +1,1 @@
+{"name":"Meal planner","short_name":"Meals","description":"A personalised vegetarian meal-planner PWA.","start_url":".","display":"standalone","background_color":"#f7f7f5","theme_color":"#1f7a52","lang":"en","scope":".","orientation":"portrait","icons":[{"src":"icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}

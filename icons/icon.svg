@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Graze">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16734f"/>
+      <stop offset="1" stop-color="#0f3d2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- bowl -->
+  <path d="M120 250 h272 a16 16 0 0 1 16 16 c0 78 -64 142 -142 142 h-20 c-78 0 -142 -64 -142 -142 a16 16 0 0 1 16 -16 z" fill="#faf7f0"/>
+  <ellipse cx="256" cy="250" rx="136" ry="22" fill="#e8743b"/>
+  <!-- leaf -->
+  <path d="M256 70 c70 28 96 92 70 150 c-58 18 -118 -22 -118 -86 c0 -28 18 -52 48 -64 z" fill="#1f9d63"/>
+  <path d="M256 96 c-2 50 6 86 36 118" fill="none" stroke="#0f3d2e" stroke-width="10" stroke-linecap="round"/>
+</svg>
