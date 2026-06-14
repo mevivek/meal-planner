@@ -9,6 +9,27 @@ timing (including an early-dinner cutoff), your office/WFH/off schedule, your
 goal and protein target, preferred cuisines, and **wellness focuses** (skin,
 hair, energy, digestion, immunity, strength).
 
+Live: **https://mevivek.dev/meal-planner/**
+
+## Features
+
+- **Onboarding wizard** — captures demographics (age/gender/weight), diet base
+  (vegetarian/vegan) + egg and exclusion toggles (e.g. no tofu), allergens,
+  cooking effort + last-meal cutoff + which days you cook, a per-day
+  office/WFH/off schedule, goal + protein target, cuisines, and wellness focus.
+- **Generated week** — Mon–Sun breakfast / lunch / early-dinner cards with prep
+  time, protein, cook tags, and step-by-step recipes for cooked meals. Office
+  days pack lunch + dinner; weekends/cook-days can include cooked dishes.
+- **Daily protein target** computed from your body-weight and goal, with a
+  no-cook booster added when a day lands short.
+- **Grocery list** aggregated from the generated week, grouped and checkable
+  (saved on-device).
+- **Swap library** and **build-your-own matrix**, both filtered to your diet.
+- **Pantry** — a branded **product-nutrition database** transcribed from real
+  nutrition labels (per-serving macros), searchable by product or brand.
+- **Regenerate** for a fresh week and **Edit preferences** to re-tune, in the
+  top bar and the More tab. Installable PWA, works offline.
+
 ## How it works
 
 1. **Onboarding** collects your preferences (see the wizard).
@@ -28,7 +49,7 @@ scoring and extensibility notes.
 | File | Responsibility |
 |------|----------------|
 | `js/data.js` | Meal library (richly tagged), wellness/cuisine config, build matrix, tips. |
-| `js/products.js` | Branded product nutrition database (per-serving macros). |
+| `js/products.js` | Branded product-nutrition database, transcribed from real labels (per-serving macros); shown in the Pantry. |
 | `js/engine.js` | Pure planner: target math, filtering, scoring, plan/grocery/swaps. |
 | `js/onboarding.js` | Preference-collection wizard. |
 | `js/app.js` | Orchestration, rendering, settings, persistence, service worker. |
