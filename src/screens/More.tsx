@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { useApp } from "../state/AppContext";
 import { TopBar } from "../components/TopBar";
 import { IconSun, IconMoon, IconMonitor } from "../components/icons";
+import { PantrySheet } from "../components/PantrySheet";
+import { TechniquesSheet } from "../components/TechniquesSheet";
 import type { Theme } from "../lib/useTheme";
 
 const THEMES: { v: Theme; label: string; Icon: typeof IconSun }[] = [
@@ -15,6 +17,7 @@ const GOAL_LABEL: Record<string, string> = { cut: "Lean / cut", maintain: "Maint
 export function More() {
   const { theme, setTheme, regenerate, resetAll, editPreferences, prefs, plan, meals, restoreMeal, toggleItem } = useApp();
   const [q, setQ] = useState("");
+  const [tool, setTool] = useState<null | "pantry" | "tips">(null);
 
   const allItems = useMemo(() => {
     const set = new Set<string>();
@@ -107,6 +110,14 @@ export function More() {
         </section>
 
         <section className="panel">
+          <h2 className="panel-title">Tools</h2>
+          <div className="panel-actions">
+            <button type="button" className="btn" onClick={() => setTool("pantry")}>Product nutrition</button>
+            <button type="button" className="btn" onClick={() => setTool("tips")}>Quick techniques</button>
+          </div>
+        </section>
+
+        <section className="panel">
           <h2 className="panel-title">About</h2>
           <p className="muted">
             A personalised vegetarian meal-planner. Everything runs on your device — nothing leaves it. Protein figures
@@ -114,6 +125,9 @@ export function More() {
           </p>
         </section>
       </div>
+
+      {tool === "pantry" && <PantrySheet onClose={() => setTool(null)} />}
+      {tool === "tips" && <TechniquesSheet onClose={() => setTool(null)} />}
     </>
   );
 }
