@@ -16,21 +16,26 @@
 
   const STATE = { prefs: null, plan: null, activeDay: "mon" };
 
+  // Toggle visibility via inline display so it always beats stylesheet rules
+  // like .onboarding/.bottom-nav { display: flex } (no cascade ambiguity).
+  function setShown(node, shown) { if (!node) return; node.hidden = !shown; node.style.display = shown ? "" : "none"; }
+
   /* ---------- persistence ---------- */
   function loadPrefs() { try { return JSON.parse(localStorage.getItem(PREFS_KEY)); } catch (e) { return null; } }
   function savePrefs(p) { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); } catch (e) {} }
 
   /* ---------- boot / onboarding ---------- */
   function showOnboarding(prefs) {
-    $("#topbar").hidden = true; $("#app").hidden = true; $("#bottomNav").hidden = true;
-    const ob = $("#onboarding"); ob.hidden = false;
-    Onboarding.run({ container: ob, prefs: prefs, onComplete: function (p) { savePrefs(p); $("#onboarding").hidden = true; boot(p); } });
+    setShown($("#topbar"), false); setShown($("#app"), false); setShown($("#bottomNav"), false);
+    const ob = $("#onboarding"); setShown(ob, true);
+    Onboarding.run({ container: ob, prefs: prefs, onComplete: function (p) { savePrefs(p); setShown(ob, false); boot(p); } });
   }
 
   function boot(prefs) {
     STATE.prefs = prefs;
     STATE.plan = Engine.generatePlan(prefs, MEALS);
-    $("#topbar").hidden = false; $("#app").hidden = false; $("#bottomNav").hidden = false;
+    setShown($("#onboarding"), false);
+    setShown($("#topbar"), true); setShown($("#app"), true); setShown($("#bottomNav"), true);
     const order = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
     STATE.activeDay = order[new Date().getDay()] || "mon";
     renderTargets(); renderPlanNote(); renderDayTabs(); selectDay(STATE.activeDay);
