@@ -36,6 +36,9 @@ const PRODUCTS = [
   { id: "amul-masti-dahi", brand: "Amul", name: "Masti Dahi (curd)", category: "Yogurt & curd", serving: "100 g", ingredient: "curd",
     per: { kcal: 61, protein: 3.5, carbs: 4.0, sugar: 4.0, fat: 3.1, fiber: 0, calcium: 120 },
     tags: ["probiotic", "calcium"], source: "label", note: "Per 100 g · 2.0 g sat fat · 0 trans · 45 mg sodium" },
+  { id: "on-gold-whey", brand: "Optimum Nutrition", name: "Gold Standard 100% Whey (Double Rich Chocolate)", category: "Protein & bars", serving: "1 scoop (30.4 g)", ingredient: "whey",
+    per: { kcal: 116, protein: 24, carbs: 3, sugar: 0.9, fat: 0.9, fiber: 0 },
+    tags: ["high-protein"], source: "label", note: "454 g / 14 scoops · 0.61 g sat fat · 50 mg sodium · contains milk & soy · gluten-free · Informed Choice" },
 
   // --- generic reference values (replace/supplement with real brands from screenshots) ---
   { id: "gen-greek-yogurt", brand: "Generic", name: "Greek yogurt (plain)", category: "Yogurt & curd", serving: "100 g", ingredient: "greek yogurt",
