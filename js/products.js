@@ -31,6 +31,9 @@ const PRODUCTS = [
   { id: "md-cow-milk", brand: "Mother Dairy", name: "Cow Milk", category: "Milk & plant milk", serving: "200 ml",
     per: { kcal: 137, protein: 6.2, carbs: 9.6, sugar: 9.6, fat: 8.2, fiber: 0, calcium: 218 },
     tags: ["calcium", "protein"], source: "label", note: "Per 200 ml glass (label per 100 ml ×2) · 5.6 g sat fat · 110 mg sodium · 5 servings/pack" },
+  { id: "amul-masti-dahi", brand: "Amul", name: "Masti Dahi (curd)", category: "Yogurt & curd", serving: "100 g",
+    per: { kcal: 61, protein: 3.5, carbs: 4.0, sugar: 4.0, fat: 3.1, fiber: 0, calcium: 120 },
+    tags: ["probiotic", "calcium"], source: "label", note: "Per 100 g · 2.0 g sat fat · 0 trans · 45 mg sodium" },
 
   // --- generic reference values (replace/supplement with real brands from screenshots) ---
   { id: "gen-greek-yogurt", brand: "Generic", name: "Greek yogurt (plain)", category: "Yogurt & curd", serving: "100 g",
