@@ -306,6 +306,23 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .ob-nav .btn--primary { flex: 2; }
 .ob-nav > span { flex: 1; }
 
+/* ---------- Day-type toggle ---------- */
+.daytype { margin-bottom: 14px; }
+.week-open { padding: 4px 12px 12px; }
+.week-open .daytype { margin: 6px 0 10px; }
+
+/* ---------- Build tab + sheet ---------- */
+.tab--build { color: var(--accent); }
+.build-fab { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); font-size: 22px; font-weight: 700; line-height: 1; }
+.sheet-note { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+.build-row { margin-bottom: 8px; }
+.chips--scroll-x { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+.chips--scroll-x::-webkit-scrollbar { display: none; }
+.chips--scroll-x .chip { white-space: nowrap; flex: 0 0 auto; }
+.build-result { margin-top: 16px; background: var(--accent-soft); border-radius: var(--radius-sm); padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.build-result strong { font-size: 16px; color: var(--ink); }
+.build-total { color: var(--accent); font-weight: 700; }
+
 @media (prefers-reduced-motion: reduce) {
   *, .content { animation: none !important; transition: none !important; }
 }

@@ -31,6 +31,7 @@ interface AppValue {
   restoreMeal: (id: string) => void;
   toggleItem: (name: string) => boolean;
   setOverride: (dayKey: string, slot: string, id: string) => void;
+  setDayType: (dayKey: string, mode: "office" | "wfh" | "off") => void;
   alternatesFor: (dayKey: string, slot: string, currentId: string) => Meal[];
   // meal logging (today-scoped)
   isEaten: (slot: string) => boolean;
@@ -120,6 +121,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setOverride = (dayKey: string, slot: string, id: string) =>
     updatePrefs((p) => ({ ...p, overrides: { ...(p.overrides || {}), [`${dayKey}:${slot}`]: id } }));
 
+  const setDayType = (dayKey: string, mode: "office" | "wfh" | "off") =>
+    updatePrefs((p) => ({ ...p, schedule: { dayTypes: { ...(p.schedule?.dayTypes || {}), [dayKey]: mode } } }));
+
   const alternatesFor = (dayKey: string, slot: string, currentId: string): Meal[] =>
     meals ? engine.alternatesFor(prefs, dayKey, slot, currentId, meals) : [];
 
@@ -136,7 +140,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       value={{
         prefs, plan, meals, todayKey,
         needsOnboarding, editing, completeOnboarding, editPreferences, cancelEditing,
-        regenerate, resetAll, excludeMeal, restoreMeal, toggleItem, setOverride, alternatesFor,
+        regenerate, resetAll, excludeMeal, restoreMeal, toggleItem, setOverride, setDayType, alternatesFor,
         isEaten, toggleEaten,
         theme, setTheme,
       }}

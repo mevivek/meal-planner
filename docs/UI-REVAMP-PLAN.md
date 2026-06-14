@@ -319,15 +319,16 @@ Each phase is independently reviewable; the live site is untouched until merge.
 - **Phase 2 — Core screens + interactions. 🟡 MOSTLY DONE.** Today/Week/Grocery/More
   built (Phase 1); per-meal **Swap** (alternates bottom sheet → override + re-plan) and
   **Exclude**, plus an **avoid-ingredients** manager in More (excluded-meal chips +
-  searchable ingredient toggle) are wired to the engine. *Remaining:* brand picker,
-  per-day day-type toggle, and the Pantry / Techniques / Build tools.
+  searchable ingredient toggle) are wired to the engine. **Per-day day-type toggle**
+  (Office/WFH/Off on Today + Week → re-plans) is in. *Remaining:* brand picker, and the
+  Pantry / Techniques tools.
 - **Phase 3 — Onboarding. ✅ DONE.** Full-screen multi-step wizard ported to React with
   the **unchanged prefs schema** (same `buildPrefs` mapping) — about you, diet, allergens,
   cooking, per-day schedule, goal + protein, cuisines, wellness. Shown on first run and
   re-openable via **More → Edit preferences** (prefilled).
-- **Phase 4 — App-feel features. 🟡 PARTLY DONE.** **Meal logging** ("mark eaten") →
-  **live protein ring** on Today, and the **dark-mode toggle**, are in. *Remaining:* the
-  (+) "Build a plate" sheet, richer motion, and more empty/edge states.
+- **Phase 4 — App-feel features. 🟡 MOSTLY DONE.** **Meal logging** ("mark eaten") →
+  **live protein ring** on Today, the **dark-mode toggle**, and the center **(+)
+  "Build a plate"** sheet are in. *Remaining:* richer motion and more empty/edge states.
 - **Phase 5 — PWA, a11y, cleanup. 🟡 PWA DONE.** `vite-plugin-pwa` (Workbox) generates
   a precaching service worker + manifest → installable & offline-first (catalogue is
   bundled, so it works with no network after first load; `autoUpdate`). *Remaining:*
