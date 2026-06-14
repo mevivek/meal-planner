@@ -1,4 +1,4 @@
-# Graze — 7-day no-cook vegetarian week
+# Graze — 7-day vegetarian week
 
 A mobile-first, installable web app for a high-protein vegetarian meal plan.
 No egg, no cheese, no tofu. **Weekdays are assembly-only** — the most you'll
