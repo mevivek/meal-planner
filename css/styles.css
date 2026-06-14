@@ -128,28 +128,41 @@ main { max-width: var(--max); margin: 0 auto; }
 }
 .day-tab:active { transform: scale(.95); }
 .day-tab .d-label { font-weight: 700; font-size: 14px; color: var(--ink); }
-.day-tab .d-mode { font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-.day-tab .d-dot { width: 6px; height: 6px; border-radius: 50%; }
+.day-tab .d-dot { width: 6px; height: 6px; border-radius: 50%; background: #cdd4c6; }
 .day-tab[data-mode="office"] .d-dot { background: var(--office); }
 .day-tab[data-mode="wfh"] .d-dot { background: var(--wfh); }
 .day-tab[data-mode="off"] .d-dot { background: var(--off); }
 .day-tab.active { background: var(--green-900); border-color: var(--green-900); }
-.day-tab.active .d-label, .day-tab.active .d-mode { color: #fff; }
+.day-tab.active .d-label { color: #fff; }
+.day-tab.active .d-dot { background: rgba(255, 255, 255, 0.4); }
+.day-tab.active[data-mode="office"] .d-dot { background: var(--office); }
+.day-tab.active[data-mode="wfh"] .d-dot { background: var(--wfh); }
+.day-tab.active[data-mode="off"] .d-dot { background: var(--off); }
 
 /* ---------- Day panel ---------- */
 .day-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin: 6px 2px 14px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin: 6px 2px 8px;
 }
-.day-header .dh-left { display: flex; align-items: center; gap: 10px; }
+.day-header .dh-left { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .day-header h3 { font-size: 24px; color: var(--green-900); }
-.mode-badge {
-  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
-  padding: 4px 10px; border-radius: 999px; color: #fff;
+
+/* Segmented day-type toggle (user picks Office / WFH / Off) */
+.mode-toggle {
+  display: inline-flex; background: #f1eee4; border: 1px solid var(--line);
+  border-radius: 999px; padding: 3px; gap: 2px;
 }
-.mode-badge.office { background: var(--office); }
-.mode-badge.wfh { background: var(--wfh); }
-.mode-badge.off { background: var(--off); }
+.mode-toggle button {
+  font: inherit; font-size: 12px; font-weight: 700; letter-spacing: .02em;
+  color: var(--ink-soft); background: none; border: 0; cursor: pointer;
+  padding: 6px 12px; border-radius: 999px; transition: background .2s, color .2s;
+}
+.mode-toggle button:active { transform: scale(.96); }
+.mode-toggle button.active { color: #fff; }
+.mode-toggle button[data-mode="office"].active { background: var(--office); }
+.mode-toggle button[data-mode="wfh"].active { background: var(--wfh); }
+.mode-toggle button[data-mode="off"].active { background: var(--off); }
+.mode-hint { font-size: 12.5px; color: var(--ink-soft); margin: 0 2px 16px; }
 .protein-total {
   text-align: right; line-height: 1.1;
 }
@@ -176,6 +189,22 @@ main { max-width: var(--max); margin: 0 auto; }
 .m-time { background: #f1eee4; color: var(--ink-soft); }
 .m-prot { background: var(--clay-soft); color: var(--clay); }
 .m-tag { background: var(--green-100); color: var(--green-700); }
+
+.meal-recipe { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.meal-recipe summary {
+  list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12.5px; font-weight: 700; color: var(--green-700);
+}
+.meal-recipe summary::-webkit-details-marker { display: none; }
+.meal-recipe summary::after { content: "▾"; transition: transform .2s ease; font-size: 11px; }
+.meal-recipe[open] summary::after { transform: rotate(180deg); }
+.meal-recipe .mr-steps {
+  font-size: 10.5px; font-weight: 700; color: var(--clay);
+  background: var(--clay-soft); padding: 2px 8px; border-radius: 999px;
+}
+.meal-recipe ol { margin: 10px 0 2px; padding-left: 18px; }
+.meal-recipe li { font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; padding-left: 3px; }
+.meal-recipe li::marker { color: var(--clay); font-weight: 700; }
 
 @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 
