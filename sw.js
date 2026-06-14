@@ -1,10 +1,13 @@
 /* Graze service worker — offline-first cache of the app shell. */
-const CACHE = "graze-v4";
+const CACHE = "graze-v5";
 const ASSETS = [
   "./",
   "./index.html",
   "./css/styles.css",
   "./js/data.js",
+  "./js/products.js",
+  "./js/engine.js",
+  "./js/onboarding.js",
   "./js/app.js",
   "./manifest.webmanifest",
   "./icons/icon.svg",
