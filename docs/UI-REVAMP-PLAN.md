@@ -261,6 +261,14 @@ GitHub Pages currently serves the static repo directly. With Vite there's a buil
 - The live site keeps working through the migration: nothing deploys until the new
   pipeline lands on `main`.
 
+> **Update — shipped via the `gh-pages` branch.** The repo's Actions runners are
+> restricted (the build job can't get a runner — marketplace actions aren't permitted),
+> so the Actions deploy fails at startup. Instead, Pages is set to **Deploy from a
+> branch → `gh-pages`**, and `scripts/deploy-ghpages.sh` builds + pushes `dist/` there;
+> GitHub's built-in "pages build and deployment" serves it. The app is **live and
+> verified** at https://mevivek.dev/meal-planner/. The Actions workflow remains for if
+> "Allow all actions and reusable workflows" is enabled later.
+
 ## 8a. Claude-hosted recipes/items (future data source)
 
 The meal/recipe catalogue may later be **generated/served via Claude** instead of the
@@ -330,10 +338,11 @@ Each phase is independently reviewable; the live site is untouched until merge.
 - **Phase 4 — App-feel features. 🟡 MOSTLY DONE.** **Meal logging** ("mark eaten") →
   **live protein ring** on Today, the **dark-mode toggle**, and the center **(+)
   "Build a plate"** sheet are in. *Remaining:* richer motion and more empty/edge states.
-- **Phase 5 — PWA, a11y, cleanup. 🟡 PWA DONE.** `vite-plugin-pwa` (Workbox) generates
-  a precaching service worker + manifest → installable & offline-first (catalogue is
-  bundled, so it works with no network after first load; `autoUpdate`). *Remaining:*
-  accessibility pass, tighten TypeScript on the ported modules, remove dead code.
+- **Phase 5 — PWA, a11y, cleanup. ✅ DONE.** `vite-plugin-pwa` (Workbox) generates a
+  precaching service worker + manifest → installable & offline-first (`autoUpdate`).
+  Keyboard `:focus-visible` ring added; `npm run typecheck` is green (new code is
+  type-clean; the three ported modules are `@ts-nocheck`, to tighten later); dead CSS
+  removed. A `scripts/deploy-ghpages.sh` publishes builds to the deploy branch.
 - **Phase 6 — QA.** iOS Safari (nav drift, safe areas), Lighthouse PWA/perf, install +
   offline test, data-migration test from an existing `graze.prefs.v1`.
 

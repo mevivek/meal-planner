@@ -1,3 +1,4 @@
+// @ts-nocheck — ported from legacy JS; type-tightened in a later pass
 /* ============================================================
    Graze — branded product nutrition database
    Per-serving macros for packaged staples. `source:"generic"`

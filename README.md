@@ -220,7 +220,8 @@ npm install
 npm run dev        # Vite dev server
 npm run build      # production build → dist/
 npm run preview    # serve the production build locally
-npm run typecheck  # tsc --noEmit (ported modules are loose for now)
+npm run typecheck  # tsc --noEmit (new code is type-clean; ported modules are @ts-nocheck)
+scripts/deploy-ghpages.sh "msg"   # build + publish to the gh-pages branch
 ```
 
 > The build uses Vite/esbuild and does not block on TypeScript errors; the ported
@@ -235,12 +236,23 @@ cd legacy && python3 -m http.server 8000   # open http://localhost:8000
 
 ## Deployment
 
-GitHub Pages, served at the `/meal-planner/` subpath (`vite.config.ts` sets
-`base: '/meal-planner/'`). `.github/workflows/deploy.yml` builds on push to `main` and
-publishes the `dist/` artifact — this requires **Settings → Pages → Source = GitHub
-Actions**. The custom domain `mevivek.dev` is configured on the user-site repo, so this
-repo only needs the base path. Nothing deploys until the new pipeline lands on `main`,
-so the live site is unaffected during the migration.
+Live at **https://mevivek.dev/meal-planner/** (served at the `/meal-planner/` subpath;
+`vite.config.ts` sets `base: '/meal-planner/'`). The custom domain is configured on the
+user-site repo, so this repo only needs the base path.
+
+**Active path — `gh-pages` branch.** GitHub Pages is set to **Settings → Pages →
+Source = "Deploy from a branch" → `gh-pages` /(root)**; the built-in "pages build and
+deployment" workflow serves whatever is pushed there. Publish a new build with:
+
+```bash
+scripts/deploy-ghpages.sh "what changed"   # builds, then pushes dist/ to gh-pages
+```
+
+**CI alternative (not currently active).** `.github/workflows/deploy.yml` builds on
+push to `main` and publishes via the Pages Actions artifact — but it needs **Settings →
+Actions → General → "Allow all actions and reusable workflows"** enabled (otherwise the
+job can't get a runner). With that enabled and Pages Source switched to "GitHub
+Actions", merges to `main` auto-deploy.
 
 ## PWA & offline
 
