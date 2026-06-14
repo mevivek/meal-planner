@@ -25,6 +25,22 @@ export const staticMealSource: MealSource = {
   },
 };
 
-// Active source. Swap this (or make it config-driven) when Claude-hosted
-// content lands; everything downstream consumes the MealSource interface.
+/** Claude-generated catalogue: a static `public/catalogue.json` produced at build
+ *  time by scripts/generate-catalogue.mjs. Falls back to the built-in library if
+ *  the file isn't present, so the app never breaks. See docs/CLAUDE-DATA-HOSTING.md. */
+export const generatedMealSource: MealSource = {
+  async getMeals() {
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}catalogue.json`);
+      if (res.ok) return (await res.json()) as Meal[];
+    } catch {
+      /* offline / missing — fall back */
+    }
+    return MEALS as unknown as Meal[];
+  },
+};
+
+// Active source. Switch to `generatedMealSource` once a validated
+// public/catalogue.json exists (see docs/CLAUDE-DATA-HOSTING.md); everything
+// downstream only consumes the MealSource interface.
 export const mealSource: MealSource = staticMealSource;
