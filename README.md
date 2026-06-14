@@ -25,6 +25,11 @@ Live: **https://mevivek.dev/meal-planner/**
 - **Grocery list** aggregated from the generated week, grouped and checkable
   (saved on-device).
 - **Swap library** and **build-your-own matrix**, both filtered to your diet.
+- **Tweak any day** — tap a meal to **swap** it for an alternate that fits the
+  day, **exclude** a meal you don't want, or **avoid ingredients** entirely;
+  the planner re-plans around your choices. Manage exclusions in More → Your plan.
+- **Brand picker** — choose a preferred brand for recipe ingredients that have
+  entries in the product database; it tags the grocery item to match.
 - **Pantry** — a branded **product-nutrition database** transcribed from real
   nutrition labels (per-serving macros), searchable by product or brand.
 - **Regenerate** for a fresh week and **Edit preferences** to re-tune, in the

@@ -44,6 +44,15 @@ const Engine = (function () {
     return false;
   }
 
+  // Hard user exclusions: a specific meal, or any meal using an avoided item.
+  function blocked(meal, prefs) {
+    const xm = prefs.excludedMeals || [];
+    if (xm.indexOf(meal.id) >= 0) return true;
+    const xi = prefs.excludedItems || [];
+    if (xi.length && (meal.items || []).some((it) => xi.indexOf(it.n) >= 0)) return true;
+    return false;
+  }
+
   function dayContext(dayKey, prefs) {
     const dayType = (prefs.schedule && prefs.schedule.dayTypes && prefs.schedule.dayTypes[dayKey]) || "wfh";
     const level = (prefs.cooking && prefs.cooking.level) || "sear";
@@ -81,16 +90,27 @@ const Engine = (function () {
     return s;
   }
 
+  function ok(m, prefs) { return !excludedByDiet(m.contains, prefs) && !blocked(m, prefs); }
+
   function pickForSlot(slot, meals, ctx, prefs, usedToday, usedWeek, remaining, rng) {
-    // Progressive relaxation so a slot is never left empty.
-    let cands = meals.filter((m) => m.slot === slot && !excludedByDiet(m.contains, prefs) && passesDay(m, ctx, prefs, false) && !usedToday.has(m.id));
-    if (!cands.length) cands = meals.filter((m) => m.slot === slot && !excludedByDiet(m.contains, prefs) && passesDay(m, ctx, prefs, true));
-    if (!cands.length) cands = meals.filter((m) => m.slot === slot && !excludedByDiet(m.contains, prefs) && COOK_RANK[m.cook] <= COOK_RANK[ctx.maxLevel]);
-    if (!cands.length) cands = meals.filter((m) => m.slot === slot && !excludedByDiet(m.contains, prefs));
+    // Progressive relaxation so a slot is never left empty (exclusions stay hard).
+    let cands = meals.filter((m) => m.slot === slot && ok(m, prefs) && passesDay(m, ctx, prefs, false) && !usedToday.has(m.id));
+    if (!cands.length) cands = meals.filter((m) => m.slot === slot && ok(m, prefs) && passesDay(m, ctx, prefs, true));
+    if (!cands.length) cands = meals.filter((m) => m.slot === slot && ok(m, prefs) && COOK_RANK[m.cook] <= COOK_RANK[ctx.maxLevel]);
+    if (!cands.length) cands = meals.filter((m) => m.slot === slot && ok(m, prefs));
     if (!cands.length) return null;
     const scored = cands.map((m) => ({ m: m, s: scoreMeal(m, prefs, usedWeek, remaining, rng) }));
     scored.sort((a, b) => b.s - a.s);
     return scored[0].m;
+  }
+
+  // Valid alternates for a manual swap of one day's slot.
+  function alternatesFor(prefs, dayKey, slot, currentId, meals) {
+    meals = meals || MEALS;
+    const ctx = dayContext(dayKey, prefs);
+    return meals
+      .filter((m) => m.slot === slot && ok(m, prefs) && passesDay(m, ctx, prefs, true) && m.id !== currentId)
+      .sort((a, b) => b.protein - a.protein);
   }
 
   function generatePlan(prefs, meals) {
@@ -107,9 +127,17 @@ const Engine = (function () {
       let dayProtein = 0;
       const picked = [];
 
+      const overrides = prefs.overrides || {};
       slots.forEach((slot) => {
         const remaining = Math.max(0, target - dayProtein);
-        const choice = pickForSlot(slot, meals, ctx, prefs, usedToday, usedWeek, remaining, rng);
+        let choice = null;
+        // Honour a manual swap if the chosen meal is still valid for this day.
+        const ovId = overrides[dayKey + ":" + slot];
+        if (ovId) {
+          const ov = meals.find((m) => m.id === ovId);
+          if (ov && ov.slot === slot && ok(ov, prefs) && passesDay(ov, ctx, prefs, true) && !usedToday.has(ov.id)) choice = ov;
+        }
+        if (!choice) choice = pickForSlot(slot, meals, ctx, prefs, usedToday, usedWeek, remaining, rng);
         if (choice) {
           picked.push(choice);
           usedToday.add(choice.id);
@@ -121,7 +149,7 @@ const Engine = (function () {
       // Protein top-up: one no-cook booster if the day lands short.
       if (dayProtein < target - 8) {
         let boosters = meals.filter(
-          (m) => m.slot === "snack" && !excludedByDiet(m.contains, prefs) && (!ctx.requirePack || m.pack)
+          (m) => m.slot === "snack" && ok(m, prefs) && (!ctx.requirePack || m.pack)
         );
         boosters = boosters.map((m) => ({ m: m, s: m.protein + (rng() - 0.5) })).sort((a, b) => b.s - a.s);
         if (boosters.length) {
@@ -161,7 +189,7 @@ const Engine = (function () {
       ["dinner", "Early-dinner swaps", "🥗"],
     ];
     return defs.map(function (def) {
-      const items = meals.filter((m) => m.slot === def[0] && !excludedByDiet(m.contains, prefs)).map((m) => m.name);
+      const items = meals.filter((m) => m.slot === def[0] && ok(m, prefs)).map((m) => m.name);
       return { slot: def[1], icon: def[2], items: items.slice(0, 8) };
     });
   }
@@ -176,8 +204,10 @@ const Engine = (function () {
   return {
     proteinTarget: proteinTarget,
     excludedByDiet: excludedByDiet,
+    blocked: blocked,
     dayContext: dayContext,
     generatePlan: generatePlan,
+    alternatesFor: alternatesFor,
     buildGrocery: buildGrocery,
     buildSwaps: buildSwaps,
     buildMatrix: buildMatrix,

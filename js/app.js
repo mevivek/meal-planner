@@ -54,16 +54,111 @@
     const order = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
     STATE.activeDay = order[new Date().getDay()] || "mon";
     renderTargets(); renderPlanNote(); renderDayTabs(); selectDay(STATE.activeDay);
-    renderBuild(); renderGrocery(); renderSwaps(); renderPantry(); renderTips(); renderPrefsSummary();
+    renderBuild(); renderGrocery(); renderSwaps(); renderPantry(); renderTips(); renderPrefsSummary(); renderExclusions();
     initNavOnce();
   }
+
+  // Re-plan with the current seed (exclusions/overrides/day-type changes) and
+  // refresh the plan-derived views, leaving the exclusions panel untouched.
+  function rebuildPlan() {
+    STATE.plan = Engine.generatePlan(STATE.prefs, MEALS);
+    renderTargets(); renderPlanNote(); renderDayTabs(); selectDay(STATE.activeDay); renderGrocery(); renderSwaps();
+  }
+  function rebuild() { rebuildPlan(); renderExclusions(); }
 
   function regenerate() {
     if (!STATE.prefs) return;
     STATE.prefs.seed = Date.now() % 2147483647;
+    STATE.prefs.overrides = {}; // a truly fresh week drops manual swaps
     savePrefs(STATE.prefs);
-    STATE.plan = Engine.generatePlan(STATE.prefs, MEALS);
-    renderTargets(); renderDayTabs(); selectDay(STATE.activeDay); renderGrocery();
+    rebuild();
+  }
+
+  /* ---------- meal exclusion / swap / ingredient avoidance ---------- */
+  const ALL_ITEMS = (function () {
+    const set = {};
+    MEALS.forEach((m) => (m.items || []).forEach((it) => { set[it.n] = true; }));
+    return Object.keys(set).sort();
+  })();
+  function excludeMeal(id) {
+    const p = STATE.prefs; p.excludedMeals = p.excludedMeals || [];
+    if (p.excludedMeals.indexOf(id) < 0) p.excludedMeals.push(id);
+    if (p.overrides) Object.keys(p.overrides).forEach((k) => { if (p.overrides[k] === id) delete p.overrides[k]; });
+    savePrefs(p); rebuild();
+  }
+  function restoreMeal(id) {
+    const p = STATE.prefs; p.excludedMeals = (p.excludedMeals || []).filter((x) => x !== id);
+    savePrefs(p); rebuild();
+  }
+  function toggleItem(name) {
+    const p = STATE.prefs; p.excludedItems = p.excludedItems || [];
+    const i = p.excludedItems.indexOf(name); const added = i < 0;
+    if (added) p.excludedItems.push(name); else p.excludedItems.splice(i, 1);
+    savePrefs(p); rebuildPlan(); // keep the exclusions panel (and its open list) in place
+    return added;
+  }
+  function setOverride(dayKey, slot, id) {
+    const p = STATE.prefs; p.overrides = p.overrides || {}; p.overrides[dayKey + ":" + slot] = id;
+    savePrefs(p); STATE.activeDay = dayKey; rebuild();
+  }
+
+  function openSwapSheet(dayKey, slot, currentId) {
+    const alts = Engine.alternatesFor(STATE.prefs, dayKey, slot, currentId, MEALS);
+    const slotName = slot === "dinner" ? "early dinner" : slot;
+    const sheet = el("div", "sheet-overlay");
+    sheet.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="Swap ${slotName}">
+      <div class="sheet-head"><b>Swap ${slotName}</b><button class="sheet-close" type="button" aria-label="Close">✕</button></div>
+      <div class="sheet-note">${DAY_FULL[dayKey]} · ${alts.length} option${alts.length === 1 ? "" : "s"} that fit this day</div>
+      <div class="sheet-list"></div></div>`;
+    const list = $(".sheet-list", sheet);
+    if (!alts.length) list.appendChild(el("p", "section-note", "No alternates fit this day. Try relaxing cooking effort or the day type."));
+    alts.forEach((a) => {
+      const row = el("button", "sheet-item"); row.type = "button";
+      row.innerHTML = `<span class="si-ico">${a.icon}</span><span class="si-body"><span class="si-name">${a.name}</span><span class="si-meta">${a.protein}g · ⏱${a.prep} min · ${a.cuisine}</span></span>`;
+      row.addEventListener("click", () => { setOverride(dayKey, slot, a.id); close(); });
+      list.appendChild(row);
+    });
+    function close() { sheet.remove(); document.removeEventListener("keydown", onKey); }
+    function onKey(e) { if (e.key === "Escape") close(); }
+    sheet.addEventListener("click", (e) => { if (e.target === sheet) close(); });
+    $(".sheet-close", sheet).addEventListener("click", close);
+    document.addEventListener("keydown", onKey);
+    document.body.appendChild(sheet);
+  }
+
+  function renderExclusions() {
+    const wrap = $("#exclusions"); if (!wrap) return; wrap.innerHTML = "";
+    const p = STATE.prefs;
+    wrap.appendChild(el("p", "ob-flabel", "Excluded meals"));
+    const xm = p.excludedMeals || [];
+    const xmWrap = el("div", "excl-chips");
+    if (!xm.length) xmWrap.appendChild(el("p", "section-note", "None — tap “Exclude” on any meal card."));
+    else xm.forEach((id) => {
+      const meal = MEALS.find((m) => m.id === id);
+      const chip = el("button", "excl-chip on", (meal ? meal.name : id) + " ✕"); chip.type = "button";
+      chip.addEventListener("click", () => restoreMeal(id));
+      xmWrap.appendChild(chip);
+    });
+    wrap.appendChild(xmWrap);
+
+    const det = el("details", "excl-details");
+    const xiCount = (p.excludedItems || []).length;
+    det.appendChild(el("summary", null, "Avoid specific ingredients" + (xiCount ? " (" + xiCount + ")" : "")));
+    const body = el("div", "excl-body");
+    const search = el("input", "pantry-search"); search.type = "search"; search.placeholder = "Search ingredients…";
+    const chips = el("div", "excl-chips");
+    const summary = $("summary", det);
+    function paint(filter) {
+      chips.innerHTML = ""; const q = (filter || "").toLowerCase(); const xi = p.excludedItems || [];
+      ALL_ITEMS.filter((n) => !q || n.toLowerCase().indexOf(q) >= 0).forEach((n) => {
+        const c = el("button", "excl-chip" + (xi.indexOf(n) >= 0 ? " on" : ""), n); c.type = "button";
+        c.addEventListener("click", () => { const added = toggleItem(n); c.classList.toggle("on", added); summary.textContent = "Avoid specific ingredients" + ((p.excludedItems || []).length ? " (" + p.excludedItems.length + ")" : ""); });
+        chips.appendChild(c);
+      });
+    }
+    search.addEventListener("input", () => paint(search.value));
+    body.appendChild(search); body.appendChild(chips); det.appendChild(body); wrap.appendChild(det);
+    paint("");
   }
 
   /* ---------- targets banner ---------- */
@@ -131,6 +226,9 @@
         ).join("");
         return `<label class="brand-pick"><span>🏷️ ${titleCase(t)}</span><select data-token="${t}">${opts}</select></label>`;
       }).join("") + `</div>` : "";
+      const actions = m.slot === "snack"
+        ? `<div class="meal-actions"><button type="button" class="meal-act" data-act="exclude">⊘ Exclude</button></div>`
+        : `<div class="meal-actions"><button type="button" class="meal-act" data-act="swap">🔄 Swap</button><button type="button" class="meal-act" data-act="exclude">⊘ Exclude</button></div>`;
       card.innerHTML = `
         <div class="m-icon">${m.icon}</div>
         <div class="m-body">
@@ -144,6 +242,7 @@
           </div>
           ${brandRow}
           ${recipe}
+          ${actions}
         </div>`;
       card.querySelectorAll(".brand-row select").forEach((sel) => sel.addEventListener("change", () => {
         const b = loadBrands(); const tok = sel.dataset.token;
@@ -151,6 +250,10 @@
         saveBrands(b);
         selectDay(STATE.activeDay); renderGrocery();
       }));
+      const swapBtn = card.querySelector('[data-act="swap"]');
+      if (swapBtn) swapBtn.addEventListener("click", () => openSwapSheet(day.key, m.slot, m.id));
+      const exclBtn = card.querySelector('[data-act="exclude"]');
+      if (exclBtn) exclBtn.addEventListener("click", () => excludeMeal(m.id));
       panel.appendChild(card);
     });
   }
@@ -164,9 +267,9 @@
 
   function setDayType(key, mode) {
     STATE.prefs.schedule.dayTypes[key] = mode;
+    STATE.activeDay = key;
     savePrefs(STATE.prefs);
-    STATE.plan = Engine.generatePlan(STATE.prefs, MEALS);
-    renderPlanNote(); renderDayTabs(); selectDay(key); renderGrocery();
+    rebuildPlan();
   }
 
   /* ---------- build matrix ---------- */
