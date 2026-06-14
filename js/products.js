@@ -24,6 +24,11 @@ const PRODUCT_CATS = [
 ];
 
 const PRODUCTS = [
+  // --- real products transcribed from nutrition labels ---
+  { id: "cd-paneer", brand: "Country Delight", name: "Paneer", category: "Paneer & tofu", serving: "90 g",
+    per: { kcal: 261, protein: 15.7, carbs: 2.3, sugar: 2.3, fat: 21.1, fiber: 0, calcium: 459 },
+    tags: ["high-protein", "calcium"], source: "label", note: "Cow milk + citric acid · 2 servings/pack · 14.8 g sat fat · 26 mg sodium" },
+
   // --- generic reference values (replace/supplement with real brands from screenshots) ---
   { id: "gen-greek-yogurt", brand: "Generic", name: "Greek yogurt (plain)", category: "Yogurt & curd", serving: "100 g",
     per: { kcal: 97, protein: 9, carbs: 4, sugar: 4, fat: 5, fiber: 0 }, tags: ["high-protein", "probiotic"], source: "generic" },

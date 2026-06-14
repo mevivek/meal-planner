@@ -210,7 +210,7 @@
     const list = PRODUCTS.filter((p) => !q || (p.name + " " + p.brand + " " + p.category).toLowerCase().indexOf(q) >= 0);
     if (!list.length) { grid.appendChild(el("p", "section-note", "No products match — try another term.")); return; }
     PRODUCT_CATS.forEach((cat) => {
-      const items = list.filter((p) => p.category === cat);
+      const items = list.filter((p) => p.category === cat).sort((a, b) => (a.source === b.source ? 0 : a.source === "label" ? -1 : 1));
       if (!items.length) return;
       grid.appendChild(el("h4", "pantry-cat", cat));
       items.forEach((p) => {
