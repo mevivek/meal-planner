@@ -14,30 +14,72 @@
   };
   const modeLabel = { office: "Office", wfh: "WFH", off: "Off" };
 
-  /* ---------- Hero chips ---------- */
-  (function chips() {
-    const wrap = $("#profileChips");
-    PLAN.profile.chips.forEach((c) => wrap.appendChild(el("span", "chip", c)));
-  })();
-
   /* ---------- Day tabs + panel ---------- */
   const tabs = $("#dayTabs");
   const panel = $("#dayPanel");
 
+  // The user sets each day's mode themselves; choices persist on-device.
+  const MODE_KEY = "graze.modes.v1";
+  const MODES = ["office", "wfh", "off"];
+  const modeHint = {
+    office: "Out ~10am–11pm: lunch packs as tiffin, dinner stays light & late.",
+    wfh: "Home day: assemble everything fresh in your morning window.",
+    off: "Day off: relaxed timing, same easy assembly.",
+    "": "Tap to set this day — Office, WFH, or Off.",
+  };
+  let modes = {};
+  try { modes = JSON.parse(localStorage.getItem(MODE_KEY)) || {}; } catch (e) { modes = {}; }
+  const getMode = (key) => modes[key] || "";
+  const tabByKey = {};
+
+  function setMode(key, mode) {
+    modes[key] = mode;
+    try { localStorage.setItem(MODE_KEY, JSON.stringify(modes)); } catch (e) {}
+    if (tabByKey[key]) tabByKey[key].dataset.mode = mode;
+  }
+
   function renderDay(day) {
+    const cur = getMode(day.key);
     panel.innerHTML = "";
     const head = el("div", "day-header");
     head.innerHTML = `
       <div class="dh-left">
         <h3>${day.full}</h3>
-        <span class="mode-badge ${day.mode}">${modeLabel[day.mode]}</span>
+        <div class="mode-toggle" role="group" aria-label="Set day type">
+          ${MODES.map(
+            (m) =>
+              `<button type="button" data-mode="${m}" class="${m === cur ? "active" : ""}" aria-pressed="${m === cur}">${modeLabel[m]}</button>`
+          ).join("")}
+        </div>
       </div>
       <div class="protein-total"><b>${day.total}g</b><span>protein</span></div>`;
     panel.appendChild(head);
 
+    const hint = el("p", "mode-hint", modeHint[cur]);
+    panel.appendChild(hint);
+
+    head.querySelectorAll(".mode-toggle button").forEach((b) => {
+      b.addEventListener("click", () => {
+        const next = b.dataset.mode === getMode(day.key) ? "" : b.dataset.mode; // tap again to clear
+        setMode(day.key, next);
+        head.querySelectorAll(".mode-toggle button").forEach((x) => {
+          const on = x.dataset.mode === next;
+          x.classList.toggle("active", on);
+          x.setAttribute("aria-pressed", on);
+        });
+        hint.textContent = modeHint[next];
+      });
+    });
+
     day.meals.forEach((m, i) => {
       const card = el("div", "meal-card");
       card.style.animationDelay = i * 0.06 + "s";
+      const recipe = m.recipe
+        ? `<details class="meal-recipe">
+             <summary>View recipe <span class="mr-steps">${m.recipe.length} steps</span></summary>
+             <ol>${m.recipe.map((s) => `<li>${s}</li>`).join("")}</ol>
+           </details>`
+        : "";
       card.innerHTML = `
         <div class="m-icon">${m.icon}</div>
         <div class="m-body">
@@ -49,6 +91,7 @@
             <span class="m-prot">${m.protein}g protein</span>
             <span class="m-tag">${m.tag}</span>
           </div>
+          ${recipe}
         </div>`;
       panel.appendChild(card);
     });
@@ -65,12 +108,12 @@
   PLAN.days.forEach((d) => {
     const t = el("button", "day-tab");
     t.dataset.key = d.key;
-    t.dataset.mode = d.mode;
+    t.dataset.mode = getMode(d.key);
     t.setAttribute("role", "tab");
     t.innerHTML = `<span class="d-label">${d.label}</span>
-      <span class="d-mode">${modeLabel[d.mode]}</span>
       <span class="d-dot"></span>`;
     t.addEventListener("click", () => selectDay(d.key));
+    tabByKey[d.key] = t;
     tabs.appendChild(t);
   });
 
@@ -273,6 +316,27 @@
         ticking = true;
       }
     });
+  })();
+
+  /* ---------- Open directly on the plan (skip the hero) ---------- */
+  (function openOnPlan() {
+    if (location.hash) return; // respect a deep link like #grocery
+    const plan = document.getElementById("plan");
+    if (!plan) return;
+    let interacted = false;
+    ["wheel", "touchstart", "keydown", "pointerdown"].forEach((ev) =>
+      window.addEventListener(ev, () => { interacted = true; }, { passive: true, once: true })
+    );
+    const jump = () => {
+      const root = document.documentElement;
+      const prev = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto"; // no animation on open
+      plan.scrollIntoView({ block: "start" });
+      root.style.scrollBehavior = prev;
+    };
+    requestAnimationFrame(() => requestAnimationFrame(jump));
+    // Re-align after fonts/images settle, unless the user already engaged.
+    window.addEventListener("load", () => { if (!interacted) jump(); });
   })();
 
   /* ---------- Service worker ---------- */
