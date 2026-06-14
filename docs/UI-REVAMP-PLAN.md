@@ -1,7 +1,8 @@
 # Meal Planner — UI/UX Revamp Plan
 
-> Status: **proposal / for review.** No app code has changed yet — this document is
-> the spec. Implementation is phased (see §9) and gated on the open questions in §11.
+> Status: **in progress.** Phase 0 (scaffold + deploy pipeline) has landed on the
+> branch; the rest is the spec. Implementation is phased (see §9). The §11 questions
+> are resolved.
 
 ## 1. Goal
 
@@ -260,14 +261,53 @@ GitHub Pages currently serves the static repo directly. With Vite there's a buil
 - The live site keeps working through the migration: nothing deploys until the new
   pipeline lands on `main`.
 
+## 8a. Claude-hosted recipes/items (future data source)
+
+The meal/recipe catalogue may later be **generated/served via Claude** instead of the
+static `data.ts` library. The app is built for this now via a seam — `src/lib/
+mealSource.ts` exposes a `MealSource` interface; today's implementation returns the
+static `MEALS`, and the engine/screens only ever see `MealSource`. Swapping the source
+touches nothing downstream.
+
+**Hard constraint — this is a keyless client-side PWA.** The Anthropic API key must
+**never** ship in the browser bundle. That rules out calling the API from the app.
+Two viable shapes:
+
+1. **Build-time generation (recommended, preserves the no-backend model).** A Node
+   script (run locally / in CI, with the key in the environment) calls Claude to
+   generate or expand the catalogue, writes it as a **static JSON asset**, and the app
+   ships/fetches that. Fully offline-first; zero runtime key exposure; deterministic
+   builds. The `MealSource` reads the generated JSON.
+2. **Thin serverless proxy (only if runtime/on-demand generation is needed).** A
+   minimal function (Cloudflare Worker / Vercel / Netlify) holds the key and calls
+   Claude; the PWA `fetch`es it. This adds a backend surface — use only if users need
+   to generate recipes live (e.g. "make me a recipe for X now").
+
+**Implementation pattern (TypeScript).** Use the official **`@anthropic-ai/sdk`** with
+**`claude-opus-4-8`** and **structured output** so recipes come back as schema-valid
+JSON: `client.messages.parse()` with a Zod schema (via `zodOutputFormat`) that mirrors
+the `Meal` shape in `src/lib/types.ts` (`id, slot, name, protein, prep, cook, pack,
+cuisine, contains[], wellness[], detail, items[], recipe[]`). Notes:
+
+- Structured-output JSON Schema doesn't enforce numeric/length bounds — **validate
+  ranges (protein/prep, allowed enums) in the generation script**, not via the schema.
+- For bulk catalogue generation, the **Batch API** runs at 50% cost.
+- Keep generated meals in the **same shape** the engine already consumes, so the engine
+  and its determinism contract are unaffected — Claude becomes a *content* source, not
+  part of the runtime planner.
+
 ## 9. Phased implementation
 
 Each phase is independently reviewable; the live site is untouched until merge.
 
-- **Phase 0 — Scaffold & prove the pipeline.** Vite+React+TS; port `engine/data/
-  products` to ES modules; render today's plan from the real engine; stand up the
-  Pages Action and confirm it deploys to `/meal-planner/`. *Exit: a deployed page that
-  generates a real plan.*
+- **Phase 0 — Scaffold & prove the pipeline. ✅ DONE (on branch).** Vite + React + TS
+  scaffolded; `engine/data/products` ported to ES modules (`src/lib/*.ts`); the legacy
+  vanilla app preserved under `legacy/`; a `MealSource` seam added (§8a); a minimal
+  **Today** screen renders a live plan from the real engine; build verified (54 kB gz)
+  and the engine smoke-tested headlessly (deterministic per seed). Pages Action added
+  (`.github/workflows/deploy.yml`) — deploys on merge to `main` (needs Settings → Pages
+  → Source = GitHub Actions). TypeScript is loose on the ported modules for now
+  (type-tightened in Phase 5; `npm run build` uses esbuild and does not block on types).
 - **Phase 1 — App shell & design system.** Tokens (light/dark), primitives, tab bar,
   top bars, hash-synced screen switching + transitions.
 - **Phase 2 — Core screens.** Today (incl. progress ring), Week, Grocery, More — port
@@ -289,15 +329,18 @@ Each phase is independently reviewable; the live site is untouched until merge.
 - **Migration test:** seed old `localStorage`, load the new app, assert the plan and
   grocery state survive.
 
-## 11. Open questions to confirm before Phase 0
+## 11. Decisions (resolved)
 
-1. **TypeScript** — adopt it (recommended), or keep plain JS?
-2. **Meal logging / "mark eaten"** (§5.1) — include this new feature? It's what most
-   makes Today feel like an app.
-3. **Brand identity — resolved.** Out of scope: we move to a neutral system with a
-   single functional accent + dark mode. No name/logo work; "Graze" is not advertised.
-4. **Deploy/domain** — confirm `mevivek.dev/meal-planner/` is a project page (CNAME on
-   the user-site repo) so we only set `base`; and that adding a Pages **Action** is OK.
-5. **Scope of first PR** — ship **Phase 0** (scaffold + deploy proof) on its own for
-   review, then iterate? (Recommended.)
+1. **TypeScript — yes.** Adopted (new code is typed; ported engine/data are loose for
+   now, tightened in Phase 5).
+2. **Meal logging / "mark eaten" — yes** (§5.1). Storage key `graze.log.v1` reserved;
+   the Today ring is wired to it in Phase 4.
+3. **Branding — out of scope.** Neutral system + single functional accent + dark mode;
+   no name/logo work; "Graze" is not advertised.
+4. **First PR = Phase 0 only** — landed on the branch; iterate from there.
+
+**Still to confirm (deployment):** that `mevivek.dev/meal-planner/` is a *project page*
+(CNAME on the user-site repo), so this repo only needs `base: '/meal-planner/'`; and
+that flipping **Settings → Pages → Source = GitHub Actions** is OK. Until then the live
+site is unaffected — nothing deploys until this lands on `main`.
 ```
