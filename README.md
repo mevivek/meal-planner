@@ -92,7 +92,7 @@ and the planner can be unit-tested headlessly.
 │   ├── components/
 │   │   ├── TabBar.tsx  TopBar.tsx  MealCard.tsx  icons.tsx
 │   └── screens/
-│       ├── Today.tsx  Week.tsx  Grocery.tsx  More.tsx
+│       ├── Today.tsx  Week.tsx  Grocery.tsx  More.tsx  Onboarding.tsx
 ├── .github/workflows/
 │   └── deploy.yml            # build + deploy to GitHub Pages
 ├── docs/
@@ -140,8 +140,10 @@ bottom `TabBar` and per-screen `TopBar`s. `src/state/AppContext.tsx` holds share
 **protein ring** driven by per-meal "mark eaten" logging, and per-meal **Swap**/
 **Exclude**), **Week** (7-day accordion with swap/exclude), **Grocery** (aggregated
 check-off with progress), and **More** (light/dark/system, regenerate, start over, and
-an excluded-meals / avoid-ingredients manager). The onboarding wizard and a few tools
-(brand picker, day-type toggle, Pantry/Build) land in later phases.
+an excluded-meals / avoid-ingredients manager). **Onboarding** is a full-screen
+multi-step wizard (shown on first run, re-openable via More → Edit preferences) that
+writes the same prefs schema the engine expects. A few tools (brand picker, day-type
+toggle, Pantry/Build) land in later phases.
 
 ### `legacy/`
 The original app: `legacy/js/{data,products,engine,onboarding,app}.js`, `legacy/css/

@@ -18,12 +18,18 @@ interface AppValue {
   plan: Plan | null;
   meals: Meal[] | null;
   todayKey: string;
+  // onboarding
+  needsOnboarding: boolean;
+  editing: boolean;
+  completeOnboarding: (p: Prefs) => void;
+  editPreferences: () => void;
+  cancelEditing: () => void;
   // plan actions (re-plan in place)
   regenerate: () => void;
   resetAll: () => void;
   excludeMeal: (id: string) => void;
   restoreMeal: (id: string) => void;
-  toggleItem: (name: string) => boolean; // returns whether it's now avoided
+  toggleItem: (name: string) => boolean;
   setOverride: (dayKey: string, slot: string, id: string) => void;
   alternatesFor: (dayKey: string, slot: string, currentId: string) => Meal[];
   // meal logging (today-scoped)
@@ -43,8 +49,11 @@ export function useApp(): AppValue {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const savedPrefs = useMemo(() => load<Prefs | null>(KEYS.prefs, null), []);
   const [meals, setMeals] = useState<Meal[] | null>(null);
-  const [prefs, setPrefs] = useState<Prefs>(() => load<Prefs>(KEYS.prefs, defaultPrefs));
+  const [prefs, setPrefs] = useState<Prefs>(savedPrefs ?? defaultPrefs);
+  const [needsOnboarding, setNeedsOnboarding] = useState(savedPrefs == null);
+  const [editing, setEditing] = useState(false);
   const [log, setLog] = useState<Record<string, boolean>>(() => load(KEYS.log, {}));
   const { theme, setTheme } = useTheme();
 
@@ -66,6 +75,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
       save(KEYS.prefs, next);
       return next;
     });
+
+  const completeOnboarding = (p: Prefs) => {
+    save(KEYS.prefs, p);
+    setPrefs(p);
+    setNeedsOnboarding(false);
+    setEditing(false);
+  };
+  const editPreferences = () => setEditing(true);
+  const cancelEditing = () => setEditing(false);
 
   const regenerate = () => updatePrefs((p) => ({ ...p, seed: Date.now() % 2147483647, overrides: {} }));
 
@@ -108,8 +126,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const isEaten = (slot: string) => !!log[`${todayISO}:${slot}`];
   const toggleEaten = (slot: string) =>
     setLog((prev) => {
-      const key = `${todayISO}:${slot}`;
-      const next = { ...prev, [key]: !prev[key] };
+      const next = { ...prev, [`${todayISO}:${slot}`]: !prev[`${todayISO}:${slot}`] };
       save(KEYS.log, next);
       return next;
     });
@@ -118,6 +135,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     <Ctx.Provider
       value={{
         prefs, plan, meals, todayKey,
+        needsOnboarding, editing, completeOnboarding, editPreferences, cancelEditing,
         regenerate, resetAll, excludeMeal, restoreMeal, toggleItem, setOverride, alternatesFor,
         isEaten, toggleEaten,
         theme, setTheme,

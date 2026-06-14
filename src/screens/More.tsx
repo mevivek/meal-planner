@@ -13,7 +13,7 @@ const THEMES: { v: Theme; label: string; Icon: typeof IconSun }[] = [
 const GOAL_LABEL: Record<string, string> = { cut: "Lean / cut", maintain: "Maintain", bulk: "Build / bulk" };
 
 export function More() {
-  const { theme, setTheme, regenerate, resetAll, prefs, plan, meals, restoreMeal, toggleItem } = useApp();
+  const { theme, setTheme, regenerate, resetAll, editPreferences, prefs, plan, meals, restoreMeal, toggleItem } = useApp();
   const [q, setQ] = useState("");
 
   const allItems = useMemo(() => {
@@ -53,6 +53,7 @@ export function More() {
           <h2 className="panel-title">Your plan</h2>
           <p className="muted">{summary}</p>
           <div className="panel-actions">
+            <button type="button" className="btn btn--primary" onClick={editPreferences}>Edit preferences</button>
             <button type="button" className="btn" onClick={regenerate}>Regenerate week</button>
             <button
               type="button"

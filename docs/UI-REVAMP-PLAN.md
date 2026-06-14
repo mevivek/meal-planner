@@ -321,7 +321,10 @@ Each phase is independently reviewable; the live site is untouched until merge.
   **Exclude**, plus an **avoid-ingredients** manager in More (excluded-meal chips +
   searchable ingredient toggle) are wired to the engine. *Remaining:* brand picker,
   per-day day-type toggle, and the Pantry / Techniques / Build tools.
-- **Phase 3 — Onboarding.** Port the wizard to React with the unchanged schema.
+- **Phase 3 — Onboarding. ✅ DONE.** Full-screen multi-step wizard ported to React with
+  the **unchanged prefs schema** (same `buildPrefs` mapping) — about you, diet, allergens,
+  cooking, per-day schedule, goal + protein, cuisines, wellness. Shown on first run and
+  re-openable via **More → Edit preferences** (prefilled).
 - **Phase 4 — App-feel features. 🟡 PARTLY DONE.** **Meal logging** ("mark eaten") →
   **live protein ring** on Today, and the **dark-mode toggle**, are in. *Remaining:* the
   (+) "Build a plate" sheet, richer motion, and more empty/edge states.
