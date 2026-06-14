@@ -316,11 +316,15 @@ Each phase is independently reviewable; the live site is untouched until merge.
   Grocery / More** screens wired to the engine (Week accordion, Grocery check-off with
   progress, More appearance/regenerate/reset). No new deps; ~57 kB gz. (Inline SVG icon
   set for now; `framer-motion`/`lucide` can be added if richer motion/icons are wanted.)
-- **Phase 2 — Core screens.** Today (incl. progress ring), Week, Grocery, More — port
-  the rendering logic out of `app.js` into components at parity.
+- **Phase 2 — Core screens + interactions. 🟡 MOSTLY DONE.** Today/Week/Grocery/More
+  built (Phase 1); per-meal **Swap** (alternates bottom sheet → override + re-plan) and
+  **Exclude**, plus an **avoid-ingredients** manager in More (excluded-meal chips +
+  searchable ingredient toggle) are wired to the engine. *Remaining:* brand picker,
+  per-day day-type toggle, and the Pantry / Techniques / Build tools.
 - **Phase 3 — Onboarding.** Port the wizard to React with the unchanged schema.
-- **Phase 4 — App-feel features.** Meal logging → live ring, dark-mode toggle, refined
-  motion, empty/edge states, the (+) "Build a plate" sheet.
+- **Phase 4 — App-feel features. 🟡 PARTLY DONE.** **Meal logging** ("mark eaten") →
+  **live protein ring** on Today, and the **dark-mode toggle**, are in. *Remaining:* the
+  (+) "Build a plate" sheet, richer motion, and more empty/edge states.
 - **Phase 5 — PWA, a11y, cleanup.** `vite-plugin-pwa`; delete dead files/CSS; keyboard
   + screen-reader pass; update README/`docs`.
 - **Phase 6 — QA.** iOS Safari (nav drift, safe areas), Lighthouse PWA/perf, install +

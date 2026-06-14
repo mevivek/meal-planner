@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import { useApp } from "../state/AppContext";
 import { TopBar } from "../components/TopBar";
 import { IconSun, IconMoon, IconMonitor } from "../components/icons";
@@ -12,7 +13,19 @@ const THEMES: { v: Theme; label: string; Icon: typeof IconSun }[] = [
 const GOAL_LABEL: Record<string, string> = { cut: "Lean / cut", maintain: "Maintain", bulk: "Build / bulk" };
 
 export function More() {
-  const { theme, setTheme, regenerate, resetAll, prefs, plan } = useApp();
+  const { theme, setTheme, regenerate, resetAll, prefs, plan, meals, restoreMeal, toggleItem } = useApp();
+  const [q, setQ] = useState("");
+
+  const allItems = useMemo(() => {
+    const set = new Set<string>();
+    (meals || []).forEach((m) => (m.items || []).forEach((it) => set.add(it.n)));
+    return [...set].sort();
+  }, [meals]);
+
+  const excludedMeals = prefs.excludedMeals || [];
+  const excludedItems = prefs.excludedItems || [];
+  const mealName = (id: string) => meals?.find((m) => m.id === id)?.name ?? id;
+  const filteredItems = q ? allItems.filter((n) => n.toLowerCase().includes(q.toLowerCase())) : allItems;
 
   const summary = [
     prefs.diet?.base === "vegan" ? "Vegan" : "Vegetarian",
@@ -45,12 +58,51 @@ export function More() {
               type="button"
               className="btn btn--danger"
               onClick={() => {
-                if (confirm("Start over? This clears your preferences and grocery list on this device.")) resetAll();
+                if (confirm("Start over? This clears your preferences, grocery list and log on this device.")) resetAll();
               }}
             >
               Start over
             </button>
           </div>
+        </section>
+
+        <section className="panel">
+          <h2 className="panel-title">Excluded & avoided</h2>
+
+          <p className="field-label">Excluded meals</p>
+          {excludedMeals.length === 0 ? (
+            <p className="muted">None — tap “Exclude” on any meal.</p>
+          ) : (
+            <div className="chips">
+              {excludedMeals.map((id) => (
+                <button key={id} type="button" className="chip chip--on" onClick={() => restoreMeal(id)}>
+                  {mealName(id)} ✕
+                </button>
+              ))}
+            </div>
+          )}
+
+          <details className="excl-details">
+            <summary>Avoid specific ingredients{excludedItems.length ? ` (${excludedItems.length})` : ""}</summary>
+            <input
+              className="search"
+              type="search"
+              placeholder="Search ingredients…"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              aria-label="Search ingredients"
+            />
+            <div className="chips chips--scroll">
+              {filteredItems.map((n) => {
+                const on = excludedItems.includes(n);
+                return (
+                  <button key={n} type="button" className={"chip" + (on ? " chip--on" : "")} aria-pressed={on} onClick={() => toggleItem(n)}>
+                    {n}
+                  </button>
+                );
+              })}
+            </div>
+          </details>
         </section>
 
         <section className="panel">

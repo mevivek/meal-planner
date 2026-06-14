@@ -3,10 +3,12 @@ import { useApp } from "../state/AppContext";
 import { TopBar, IconButton } from "../components/TopBar";
 import { IconRefresh } from "../components/icons";
 import { MealCard } from "../components/MealCard";
+import { SwapSheet } from "../components/SwapSheet";
 
 export function Week() {
-  const { plan, todayKey, regenerate } = useApp();
+  const { plan, todayKey, regenerate, excludeMeal } = useApp();
   const [open, setOpen] = useState<string | null>(todayKey);
+  const [swap, setSwap] = useState<{ dayKey: string; slot: string; id: string } | null>(null);
   if (!plan) return <p className="loading">Loading your week…</p>;
 
   return (
@@ -28,12 +30,25 @@ export function Week() {
                   <span className="week-total">{d.total}g</span>
                   <span className="week-chev" aria-hidden="true">▾</span>
                 </button>
-                {isOpen && <ul className="meals week-meals">{d.meals.map((m) => <MealCard key={m.id} meal={m} />)}</ul>}
+                {isOpen && (
+                  <ul className="meals week-meals">
+                    {d.meals.map((m) => (
+                      <MealCard
+                        key={m.id}
+                        meal={m}
+                        onSwap={m.slot !== "snack" ? () => setSwap({ dayKey: d.key, slot: m.slot, id: m.id }) : undefined}
+                        onExclude={() => excludeMeal(m.id)}
+                      />
+                    ))}
+                  </ul>
+                )}
               </li>
             );
           })}
         </ul>
       </div>
+
+      {swap && <SwapSheet dayKey={swap.dayKey} slot={swap.slot} currentId={swap.id} onClose={() => setSwap(null)} />}
     </>
   );
 }
