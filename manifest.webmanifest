@@ -1,7 +1,7 @@
 {
   "name": "Graze — No-cook veg week",
   "short_name": "Graze",
-  "description": "A 7-day no-cook vegetarian meal plan: assembly-only, high-protein, no egg, no cheese.",
+  "description": "A 7-day vegetarian meal plan: no-cook assembly-only weekdays, cook-if-you-like weekends. High-protein, no egg, no cheese.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
