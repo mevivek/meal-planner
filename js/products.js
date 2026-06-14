@@ -19,7 +19,7 @@ const PRODUCT_CATS = [
   "Nut & seed butters",
   "Seeds & nuts",
   "Grains & flours",
-  "Plant milk",
+  "Milk & plant milk",
   "Protein & bars",
 ];
 
@@ -28,6 +28,9 @@ const PRODUCTS = [
   { id: "cd-paneer", brand: "Country Delight", name: "Paneer", category: "Paneer & tofu", serving: "90 g",
     per: { kcal: 261, protein: 15.7, carbs: 2.3, sugar: 2.3, fat: 21.1, fiber: 0, calcium: 459 },
     tags: ["high-protein", "calcium"], source: "label", note: "Cow milk + citric acid · 2 servings/pack · 14.8 g sat fat · 26 mg sodium" },
+  { id: "md-cow-milk", brand: "Mother Dairy", name: "Cow Milk", category: "Milk & plant milk", serving: "200 ml",
+    per: { kcal: 137, protein: 6.2, carbs: 9.6, sugar: 9.6, fat: 8.2, fiber: 0, calcium: 218 },
+    tags: ["calcium", "protein"], source: "label", note: "Per 200 ml glass (label per 100 ml ×2) · 5.6 g sat fat · 110 mg sodium · 5 servings/pack" },
 
   // --- generic reference values (replace/supplement with real brands from screenshots) ---
   { id: "gen-greek-yogurt", brand: "Generic", name: "Greek yogurt (plain)", category: "Yogurt & curd", serving: "100 g",
