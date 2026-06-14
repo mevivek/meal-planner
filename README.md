@@ -1,48 +1,47 @@
-# Graze — 7-day vegetarian week
+# Graze — personalised vegetarian meal-planner engine
 
-A mobile-first, installable web app for a high-protein vegetarian meal plan.
-No egg, no cheese, no tofu. **Weekdays are assembly-only** — the most you'll
-do is toast bread or sear paneer for five minutes. **Weekends relax the
-rules** with proper cooked recipes (with method steps).
+A mobile-first, installable web app that asks about you once, then **generates
+a personalised vegetarian week** and regenerates fresh weeks on demand. No
+backend — everything runs client-side and persists on your device.
 
-Built for a 12pm–10pm workday: tiffin-friendly lunches, an **early dinner
-eaten by 7–8pm** (packed to eat at work on office days, since home comes
-late), and ~60–80g protein per day.
+The plan adapts to your diet and exclusions, allergens, cooking effort and
+timing (including an early-dinner cutoff), your office/WFH/off schedule, your
+goal and protein target, preferred cuisines, and **wellness focuses** (skin,
+hair, energy, digestion, immunity, strength).
 
-## Features
+## How it works
 
-- **The week** — Mon–Sun chart (breakfast/lunch/dinner) with a per-day
-  Office / WFH / Off toggle you set yourself (saved on-device), per-meal time,
-  protein, and a per-day protein total. Opens straight on the plan, on today.
-- **Weekend recipes** — Saturday & Sunday meals are cooked dishes with
-  expandable step-by-step method; weekdays stay no-cook.
-- **No-cook protein shelf** — the staples to keep stocked.
-- **Build-your-own matrix** — tap a base × protein × veg × dressing to plate a
-  combo with a live protein estimate.
-- **Grocery list** — grouped by category, checkable, progress saved on-device.
-- **Swap library** — alternates for every meal slot so weeks never repeat.
-- **Quick techniques** — rice-paper rolling, 30-second peanut dip, 5-min sear.
+1. **Onboarding** collects your preferences (see the wizard).
+2. The **engine** (`js/engine.js`) filters the meal library to what fits your
+   diet and each day's constraints, scores candidates by wellness focus,
+   cuisine, protein need and variety, and assembles a 7-day plan — topping up
+   protein with a no-cook booster when a day lands short.
+3. You get a generated week, a grocery list aggregated from it, diet-aware
+   swaps, a build-your-own matrix, branded **product nutrition** (Pantry), and
+   techniques. **Regenerate** reshuffles; **Edit preferences** re-tunes.
+
+See [`docs/ENGINE.md`](docs/ENGINE.md) for the full architecture, data model,
+scoring and extensibility notes.
+
+## Modules
+
+| File | Responsibility |
+|------|----------------|
+| `js/data.js` | Meal library (richly tagged), wellness/cuisine config, build matrix, tips. |
+| `js/products.js` | Branded product nutrition database (per-serving macros). |
+| `js/engine.js` | Pure planner: target math, filtering, scoring, plan/grocery/swaps. |
+| `js/onboarding.js` | Preference-collection wizard. |
+| `js/app.js` | Orchestration, rendering, settings, persistence, service worker. |
 
 ## Tech
 
-Plain HTML, CSS, and JavaScript — no framework, no build step. Installable PWA
-with an offline service worker. All plan content lives in `js/data.js`.
+Plain HTML/CSS/JS, no framework or build step. Installable PWA with an offline
+service worker. The engine is deterministic given a seed, so it is unit-tested
+headlessly (see the engine + jsdom checks used during development).
 
 ## Run locally
 
 ```bash
 python3 -m http.server 8000
 # open http://localhost:8000
-```
-
-## Structure
-
-```
-index.html            App shell + sections
-css/styles.css        Mobile-first styles
-js/data.js            All plan content (edit meals here)
-js/app.js             Rendering + interactions
-manifest.webmanifest  PWA manifest
-sw.js                 Offline service worker
-icons/icon.svg        App icon
 ```
