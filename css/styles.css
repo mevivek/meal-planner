@@ -307,33 +307,47 @@ main { max-width: var(--max); margin: 0 auto; }
 .page-foot { margin: 30px 0 10px; padding: 18px; text-align: center; }
 .page-foot p { font-size: 12.5px; color: var(--ink-soft); }
 
-/* ---------- Bottom nav ---------- */
+/* ---------- Bottom nav (floating pill bar) ---------- */
 .bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
-  display: flex; max-width: var(--max); margin: 0 auto;
+  position: fixed; z-index: 50;
+  left: 14px; right: 14px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  max-width: 432px; margin: 0 auto;
+  display: flex; gap: 2px;
   /* Solid background (no backdrop-filter): blur on a fixed element makes
      iOS Safari detach it mid-page during momentum scroll. */
   background: #fff;
-  border-top: 1px solid var(--line);
-  box-shadow: 0 -2px 14px rgba(20, 40, 30, 0.06);
-  padding-bottom: env(safe-area-inset-bottom);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(20, 40, 30, 0.16), 0 2px 6px rgba(20, 40, 30, 0.08);
+  padding: 8px 8px;
   /* Own compositing layer keeps it pinned while scrolling. */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
   will-change: transform;
 }
 .nav-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-  padding: 9px 4px; text-decoration: none; color: var(--ink-soft);
-  font-size: 10.5px; font-weight: 600; transition: color .2s;
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 9px 4px; border-radius: 16px;
+  text-decoration: none; color: var(--ink-soft);
+  font-size: 10.5px; font-weight: 600;
+  transition: color .22s ease, background .22s ease, transform .15s ease;
 }
-.nav-item .nav-ico { font-size: 20px; filter: grayscale(.4) opacity(.7); transition: filter .2s, transform .2s; }
-.nav-item.active { color: var(--green-900); }
-.nav-item.active .nav-ico { filter: none; transform: translateY(-2px) scale(1.08); }
+.nav-item:active { transform: scale(.93); }
+.nav-item .nav-ico {
+  font-size: 19px; line-height: 1;
+  filter: grayscale(.5) opacity(.65);
+  transition: filter .22s ease, transform .22s ease;
+}
+.nav-item.active { color: var(--green-900); background: var(--green-100); }
+.nav-item.active .nav-ico { filter: none; transform: translateY(-1px) scale(1.06); }
+
+/* clear the floating bar */
+body { padding-bottom: calc(var(--nav-h) + 30px + env(safe-area-inset-bottom)); }
 
 /* ---------- Larger screens ---------- */
 @media (min-width: 600px) {
-  main, .topbar-inner, .bottom-nav { max-width: var(--max); }
+  main, .topbar-inner { max-width: var(--max); }
   .tips-grid { display: grid; grid-template-columns: 1fr 1fr; }
   .shelf-grid { grid-template-columns: 1fr 1fr 1fr; }
 }
