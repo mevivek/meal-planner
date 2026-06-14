@@ -20,6 +20,21 @@
   // like .onboarding/.bottom-nav { display: flex } (no cascade ambiguity).
   function setShown(node, shown) { if (!node) return; node.hidden = !shown; node.style.display = shown ? "" : "none"; }
 
+  /* ---------- brand picking (link recipe ingredients to products) ---------- */
+  const BRANDS_KEY = "graze.brands.v1";
+  const BRAND_INDEX = {}; // ingredient token -> products[]
+  PRODUCTS.forEach((p) => { if (!p.ingredient) return; (BRAND_INDEX[p.ingredient] = BRAND_INDEX[p.ingredient] || []).push(p); });
+  function loadBrands() { try { return JSON.parse(localStorage.getItem(BRANDS_KEY)) || {}; } catch (e) { return {}; } }
+  function saveBrands(b) { try { localStorage.setItem(BRANDS_KEY, JSON.stringify(b)); } catch (e) {} }
+  function tokensForItem(name) { const n = name.toLowerCase(); return Object.keys(BRAND_INDEX).filter((t) => n.indexOf(t) >= 0); }
+  // tokens in a meal that actually have a real brand to choose from
+  function brandableTokens(meal) {
+    const set = {};
+    (meal.items || []).forEach((it) => tokensForItem(it.n).forEach((t) => { if (BRAND_INDEX[t].some((p) => p.source === "label")) set[t] = true; }));
+    return Object.keys(set);
+  }
+  const titleCase = (s) => s.replace(/\b\w/g, (c) => c.toUpperCase());
+
   /* ---------- persistence ---------- */
   function loadPrefs() { try { return JSON.parse(localStorage.getItem(PREFS_KEY)); } catch (e) { return null; } }
   function savePrefs(p) { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)); } catch (e) {} }
@@ -104,10 +119,18 @@
     panel.appendChild(head);
     head.querySelectorAll(".mode-toggle button").forEach((b) => b.addEventListener("click", () => setDayType(day.key, b.dataset.mode)));
 
+    const brands = loadBrands();
     day.meals.forEach((m, i) => {
       const card = el("div", "meal-card"); card.style.animationDelay = i * 0.05 + "s";
       const recipe = m.recipe ? `<details class="meal-recipe"><summary>View recipe <span class="mr-steps">${m.recipe.length} steps</span></summary><ol>${m.recipe.map((s) => `<li>${s}</li>`).join("")}</ol></details>` : "";
       const slotName = m.slot === "snack" ? "Booster" : m.slot === "dinner" ? "Early dinner" : m.slot.charAt(0).toUpperCase() + m.slot.slice(1);
+      const toks = brandableTokens(m);
+      const brandRow = toks.length ? `<div class="brand-row">` + toks.map((t) => {
+        const opts = [`<option value="">Any brand</option>`].concat(
+          BRAND_INDEX[t].map((p) => `<option value="${p.id}"${brands[t] === p.id ? " selected" : ""}>${p.brand} · ${p.per.protein}g · ${p.serving}</option>`)
+        ).join("");
+        return `<label class="brand-pick"><span>🏷️ ${titleCase(t)}</span><select data-token="${t}">${opts}</select></label>`;
+      }).join("") + `</div>` : "";
       card.innerHTML = `
         <div class="m-icon">${m.icon}</div>
         <div class="m-body">
@@ -119,8 +142,15 @@
             <span class="m-prot">${m.protein}g protein</span>
             <span class="m-tag">${cookTag(m, day)}</span>
           </div>
+          ${brandRow}
           ${recipe}
         </div>`;
+      card.querySelectorAll(".brand-row select").forEach((sel) => sel.addEventListener("change", () => {
+        const b = loadBrands(); const tok = sel.dataset.token;
+        if (sel.value) b[tok] = sel.value; else delete b[tok];
+        saveBrands(b);
+        selectDay(STATE.activeDay); renderGrocery();
+      }));
       panel.appendChild(card);
     });
   }
@@ -174,14 +204,21 @@
   function renderGrocery() {
     const list = $("#groceryList"); list.innerHTML = "";
     const groups = Engine.buildGrocery(STATE.plan);
-    let checks = loadChecks(); let total = 0;
+    let checks = loadChecks(); let total = 0; const brands = loadBrands();
     const svg = `<svg viewBox="0 0 16 16"><polyline points="2,8 6,12 14,3"/></svg>`;
     groups.forEach((g) => {
       const group = el("div", "grocery-group"); group.appendChild(el("h3", null, g.group));
       g.items.forEach((item) => {
         total++; const id = item;
         const row = el("div", "g-item"); if (checks[id]) row.classList.add("checked");
-        row.innerHTML = `<span class="g-check">${svg}</span><span class="g-text">${item}</span>`;
+        let badge = "";
+        const toks = tokensForItem(item);
+        for (let k = 0; k < toks.length; k++) {
+          const pid = brands[toks[k]]; if (!pid) continue;
+          const prod = PRODUCTS.find((p) => p.id === pid);
+          if (prod && prod.source === "label") { badge = ` <span class="g-brand">${prod.brand}</span>`; break; }
+        }
+        row.innerHTML = `<span class="g-check">${svg}</span><span class="g-text">${item}${badge}</span>`;
         row.addEventListener("click", () => { row.classList.toggle("checked"); checks[id] = row.classList.contains("checked"); save(); update(); });
         group.appendChild(row);
       });

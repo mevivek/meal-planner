@@ -473,6 +473,17 @@ body { padding-bottom: calc(var(--nav-h) + 30px + env(safe-area-inset-bottom)); 
 .manage-btn.primary { background: var(--green-900); color: #fff; border-color: var(--green-900); }
 .manage-btn.danger { color: var(--clay); }
 
+/* ---------- Brand picker (recipe ingredient -> product) ---------- */
+.brand-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); }
+.brand-pick { display: flex; flex-direction: column; gap: 4px; }
+.brand-pick > span { font-size: 10.5px; font-weight: 700; letter-spacing: .03em; color: var(--green-700); }
+.brand-pick select {
+  font: inherit; font-size: 12.5px; font-weight: 600; color: var(--ink);
+  background: #fff; border: 1.5px solid var(--line); border-radius: 10px; padding: 7px 10px; max-width: 220px;
+}
+.brand-pick select:focus { outline: none; border-color: var(--green-500); }
+.g-brand { font-size: 10.5px; font-weight: 700; color: var(--green-700); background: var(--green-100); padding: 2px 8px; border-radius: 999px; margin-left: 6px; }
+
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; scroll-behavior: auto; transition: none !important; }
 }
